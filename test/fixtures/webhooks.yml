@@ -1,0 +1,13 @@
+alice_webhook:
+  id: "0000cccc-1111-1111-1111-111111111111"
+  user_id: "11111111-1111-1111-1111-111111111111"
+  url: https://example.com/webhook
+  events: '["post.created"]'
+  active: true
+
+inactive_webhook:
+  id: "0000cccc-2222-2222-2222-222222222222"
+  user_id: "22222222-2222-2222-2222-222222222222"
+  url: https://example.com/inactive
+  events: '["post.created", "post.voted"]'
+  active: false

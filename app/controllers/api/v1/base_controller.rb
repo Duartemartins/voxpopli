@@ -3,6 +3,8 @@ module Api
     class BaseController < ActionController::API
       before_action :authenticate_api_key!
 
+      rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
       private
 
       def authenticate_api_key!
@@ -24,6 +26,10 @@ module Api
         else
           @api_key.increment_usage!
         end
+      end
+
+      def record_not_found
+        render json: { error: "Record not found" }, status: :not_found
       end
     end
   end

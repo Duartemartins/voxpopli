@@ -48,6 +48,11 @@ Rails.application.configure do
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
 
+  # Active Record Encryption keys for test environment
+  config.active_record.encryption.primary_key = "test_primary_key_for_encryption_32"
+  config.active_record.encryption.deterministic_key = "test_deterministic_key_encr_32"
+  config.active_record.encryption.key_derivation_salt = "test_key_derivation_salt_for_32"
+
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
 end

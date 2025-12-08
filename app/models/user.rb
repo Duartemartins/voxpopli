@@ -12,10 +12,11 @@ class User < ApplicationRecord
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_posts, through: :bookmarks, source: :post
   has_many :notifications, dependent: :destroy
+  has_many :notifications_as_actor, class_name: "Notification", foreign_key: :actor_id, dependent: :destroy
   has_many :api_keys, dependent: :destroy
   has_many :webhooks, dependent: :destroy
-  has_one :invite_used, class_name: "Invite", foreign_key: :invitee_id
-  has_many :invites_sent, class_name: "Invite", foreign_key: :inviter_id
+  has_one :invite_used, class_name: "Invite", foreign_key: :invitee_id, dependent: :nullify
+  has_many :invites_sent, class_name: "Invite", foreign_key: :inviter_id, dependent: :destroy
 
   has_many :active_follows, class_name: "Follow", foreign_key: :follower_id, dependent: :destroy
   has_many :passive_follows, class_name: "Follow", foreign_key: :followed_id, dependent: :destroy

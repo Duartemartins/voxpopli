@@ -1,6 +1,6 @@
 class CreateThemes < ActiveRecord::Migration[8.0]
   def change
-    create_table :themes, id: :uuid do |t|
+    create_table :themes, id: :string do |t|
       t.string :name, null: false
       t.string :slug, null: false
       t.text :description

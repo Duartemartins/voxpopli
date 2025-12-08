@@ -13,6 +13,6 @@ class Theme < ApplicationRecord
   private
 
   def generate_slug
-    self.slug ||= name.parameterize
+    self.slug ||= name&.parameterize
   end
 end

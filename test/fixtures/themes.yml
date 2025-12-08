@@ -1,0 +1,11 @@
+build_in_public:
+  id: "aaaa1111-1111-1111-1111-111111111111"
+  name: Build in Public
+  slug: build-in-public
+  posts_count: 0
+
+startup:
+  id: "aaaa2222-2222-2222-2222-222222222222"
+  name: Startup
+  slug: startup
+  posts_count: 0

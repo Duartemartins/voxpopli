@@ -1,0 +1,135 @@
+require "test_helper"
+
+class PostTest < ActiveSupport::TestCase
+  test "valid post" do
+    post = Post.new(
+      body: "Test post content",
+      user: users(:alice)
+    )
+    assert post.valid?
+  end
+
+  test "requires body" do
+    post = Post.new(user: users(:alice))
+    assert_not post.valid?
+    assert_includes post.errors[:body], "can't be blank"
+  end
+
+  test "requires user" do
+    post = Post.new(body: "Test content")
+    assert_not post.valid?
+  end
+
+  test "theme is optional" do
+    post = Post.new(
+      body: "No theme post",
+      user: users(:alice)
+    )
+    assert post.valid?
+  end
+
+  test "reply? returns true for replies" do
+    reply = posts(:reply_to_alice)
+    assert reply.reply?
+
+    original = posts(:alice_post)
+    assert_not original.reply?
+  end
+
+  test "repost? returns true for reposts" do
+    post = posts(:alice_post)
+    assert_not post.repost?
+
+    repost = Post.new(
+      body: "Reposting this",
+      user: users(:bob),
+      repost_of: post
+    )
+    repost.save!
+    assert repost.repost?
+  end
+
+  test "voted_by? checks if user voted" do
+    post = posts(:alice_post)
+    bob = users(:bob)
+    charlie = users(:charlie)
+
+    # bob and charlie voted on alice_post (from fixtures)
+    assert post.voted_by?(bob)
+    assert post.voted_by?(charlie)
+
+    # alice hasn't voted on her own post
+    assert_not post.voted_by?(users(:alice))
+  end
+
+  test "voted_by? returns false for nil user" do
+    post = posts(:alice_post)
+    assert_not post.voted_by?(nil)
+  end
+
+  test "vote_value_by returns vote value" do
+    post = posts(:alice_post)
+    bob = users(:bob)
+
+    assert_equal 1, post.vote_value_by(bob)
+    assert_equal 0, post.vote_value_by(users(:alice))
+    assert_equal 0, post.vote_value_by(nil)
+  end
+
+  test "recalculate_score! updates score from votes" do
+    post = posts(:alice_post)
+    # Reset score
+    post.update_column(:score, 0)
+
+    post.recalculate_score!
+    post.reload
+
+    # bob and charlie both upvoted (+1 each)
+    assert_equal 2, post.score
+  end
+
+  test "scope by_new orders by created_at desc" do
+    posts = Post.by_new
+    assert posts.first.created_at >= posts.last.created_at
+  end
+
+  test "scope original excludes replies and reposts" do
+    original_posts = Post.original
+    original_posts.each do |post|
+      assert_nil post.parent_id
+      assert_nil post.repost_of_id
+    end
+  end
+
+  test "scope for_theme filters by theme" do
+    theme = themes(:build_in_public)
+    themed_posts = Post.for_theme(theme)
+
+    themed_posts.each do |post|
+      assert_equal theme, post.theme
+    end
+  end
+
+  test "scope for_theme returns all when nil" do
+    all_posts = Post.all.count
+    posts_for_nil_theme = Post.for_theme(nil).count
+    assert_equal all_posts, posts_for_nil_theme
+  end
+
+  test "replies are destroyed when parent is destroyed" do
+    parent = posts(:alice_post)
+    _reply = posts(:reply_to_alice)
+
+    assert_difference "Post.count", -2 do
+      parent.destroy
+    end
+  end
+
+  test "generates uuid on create" do
+    post = Post.create!(
+      body: "UUID test",
+      user: users(:alice)
+    )
+    assert_match(/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i, post.id)
+  end
+end

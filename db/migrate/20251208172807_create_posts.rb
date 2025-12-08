@@ -1,12 +1,12 @@
 class CreatePosts < ActiveRecord::Migration[8.0]
   def change
-    create_table :posts, id: :uuid do |t|
-      t.references :user, type: :uuid, null: false, foreign_key: true
-      t.references :theme, type: :uuid, foreign_key: true, null: true
-      t.references :parent, type: :uuid, foreign_key: { to_table: :posts }, null: true
-      t.references :repost_of, type: :uuid, foreign_key: { to_table: :posts }, null: true
+    create_table :posts, id: :string do |t|
+      t.references :user, type: :string, null: false, foreign_key: true
+      t.references :theme, type: :string, foreign_key: true, null: true
+      t.references :parent, type: :string, foreign_key: { to_table: :posts }, null: true
+      t.references :repost_of, type: :string, foreign_key: { to_table: :posts }, null: true
 
-      t.text :content, null: false
+      t.text :body, null: false
       t.integer :votes_count, default: 0
       t.integer :score, default: 0
       t.integer :replies_count, default: 0
