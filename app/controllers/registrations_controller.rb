@@ -1,5 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
-  before_action :validate_invite_code, only: [:new, :create]
+  before_action :validate_invite_code, only: [ :new, :create ]
 
   def new
     @invite = Invite.available.find_by!(code: params[:invite_code])
@@ -28,7 +28,7 @@ class RegistrationsController < Devise::RegistrationsController
   def validate_invite_code
     code = params[:invite_code] || params.dig(:user, :invite_code)
     unless code.present? && Invite.available.exists?(code: code)
-      redirect_to root_path, alert: 'Valid invite code required to register'
+      redirect_to root_path, alert: "Valid invite code required to register"
     end
   end
 end

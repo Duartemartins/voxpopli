@@ -11,7 +11,7 @@ class CreateApiKeys < ActiveRecord::Migration[8.0]
       t.datetime :expires_at
       t.timestamps
     end
-    
+
     add_index :api_keys, :key_prefix, unique: true
   end
 end

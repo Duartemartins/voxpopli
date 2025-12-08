@@ -6,7 +6,7 @@ module Api
       def create
         post = Post.find(params[:post_id])
         value = params[:value].to_i
-        value = 1 unless value.in?([-1, 1])
+        value = 1 unless value.in?([ -1, 1 ])
 
         vote = post.votes.find_by(user: current_user)
 

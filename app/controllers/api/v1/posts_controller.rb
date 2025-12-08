@@ -4,11 +4,11 @@ module Api
       before_action :check_rate_limit!
 
       def index
-        sort = params[:sort].presence_in(%w[new voted]) || 'new'
+        sort = params[:sort].presence_in(%w[new voted]) || "new"
         theme = Theme.find_by(slug: params[:theme])
 
         posts = Post.original.for_theme(theme)
-        posts = sort == 'voted' ? posts.by_voted : posts.by_new
+        posts = sort == "voted" ? posts.by_voted : posts.by_new
         posts = posts.includes(:user, :theme).page(params[:page]).per(25)
 
         render json: {

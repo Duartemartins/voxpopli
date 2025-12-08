@@ -2,7 +2,7 @@ class Vote < ApplicationRecord
   belongs_to :user
   belongs_to :post
 
-  validates :value, inclusion: { in: [-1, 1] }
+  validates :value, inclusion: { in: [ -1, 1 ] }
   validates :user_id, uniqueness: { scope: :post_id, message: "has already voted on this post" }
   validate :cannot_vote_own_post
   validate :voting_rate_limit
@@ -30,7 +30,7 @@ class Vote < ApplicationRecord
   end
 
   def voting_rate_limit
-    recent_votes = user.votes.where('created_at > ?', 1.minute.ago).count
+    recent_votes = user.votes.where("created_at > ?", 1.minute.ago).count
     errors.add(:base, "You're voting too fast") if recent_votes >= 30
   end
 
@@ -46,16 +46,16 @@ class Vote < ApplicationRecord
       user: post.user,
       actor: user,
       notifiable: post,
-      action: 'voted'
+      action: "voted"
     )
   end
 
   def trigger_webhooks
     post.user.webhooks.active.each do |webhook|
       events = JSON.parse(webhook.events) rescue []
-      if events.include?('post.voted')
-        WebhookDeliveryJob.perform_later(webhook.id, 'post.voted', { 
-          post_id: post_id, 
+      if events.include?("post.voted")
+        WebhookDeliveryJob.perform_later(webhook.id, "post.voted", {
+          post_id: post_id,
           voter_id: user_id,
           value: value,
           new_score: post.score

@@ -14,11 +14,11 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :api_keys, dependent: :destroy
   has_many :webhooks, dependent: :destroy
-  has_one :invite_used, class_name: 'Invite', foreign_key: :invitee_id
-  has_many :invites_sent, class_name: 'Invite', foreign_key: :inviter_id
+  has_one :invite_used, class_name: "Invite", foreign_key: :invitee_id
+  has_many :invites_sent, class_name: "Invite", foreign_key: :inviter_id
 
-  has_many :active_follows, class_name: 'Follow', foreign_key: :follower_id, dependent: :destroy
-  has_many :passive_follows, class_name: 'Follow', foreign_key: :followed_id, dependent: :destroy
+  has_many :active_follows, class_name: "Follow", foreign_key: :follower_id, dependent: :destroy
+  has_many :passive_follows, class_name: "Follow", foreign_key: :followed_id, dependent: :destroy
   has_many :following, through: :active_follows, source: :followed
   has_many :followers, through: :passive_follows, source: :follower
 
@@ -28,8 +28,8 @@ class User < ApplicationRecord
             length: { minimum: 3, maximum: 20 },
             exclusion: { in: RESERVED_USERNAMES, message: "is reserved" }
 
-  normalizes :username, with: -> (u) { u.strip.downcase }
-  normalizes :email, with: -> (e) { e.strip.downcase }
+  normalizes :username, with: ->(u) { u.strip.downcase }
+  normalizes :email, with: ->(e) { e.strip.downcase }
 
   def to_param
     username

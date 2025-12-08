@@ -6,11 +6,11 @@ module Api
       private
 
       def authenticate_api_key!
-        token = request.headers['Authorization']&.split(' ')&.last
+        token = request.headers["Authorization"]&.split(" ")&.last
         @api_key = ApiKey.authenticate(token)
 
         unless @api_key
-          render json: { error: 'Invalid or missing API key' }, status: :unauthorized
+          render json: { error: "Invalid or missing API key" }, status: :unauthorized
         end
       end
 
@@ -20,7 +20,7 @@ module Api
 
       def check_rate_limit!
         if @api_key.rate_limit_exceeded?
-          render json: { error: 'Rate limit exceeded', retry_after: 1.hour.to_i }, status: :too_many_requests
+          render json: { error: "Rate limit exceeded", retry_after: 1.hour.to_i }, status: :too_many_requests
         else
           @api_key.increment_usage!
         end

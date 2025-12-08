@@ -8,7 +8,7 @@ class CreateThemes < ActiveRecord::Migration[8.0]
       t.integer :posts_count, default: 0
       t.timestamps
     end
-    
+
     add_index :themes, :slug, unique: true
   end
 end

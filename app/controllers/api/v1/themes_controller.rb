@@ -1,7 +1,7 @@
 module Api
   module V1
     class ThemesController < BaseController
-      skip_before_action :authenticate_api_key!, only: [:index, :show]
+      skip_before_action :authenticate_api_key!, only: [ :index, :show ]
 
       def index
         themes = Theme.all.order(:name)

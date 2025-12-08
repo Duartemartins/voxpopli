@@ -1,11 +1,11 @@
 class Post < ApplicationRecord
   belongs_to :user, counter_cache: true
   belongs_to :theme, counter_cache: true, optional: true
-  belongs_to :parent, class_name: 'Post', optional: true, counter_cache: :replies_count
-  belongs_to :repost_of, class_name: 'Post', optional: true, counter_cache: :reposts_count
+  belongs_to :parent, class_name: "Post", optional: true, counter_cache: :replies_count
+  belongs_to :repost_of, class_name: "Post", optional: true, counter_cache: :reposts_count
 
-  has_many :replies, class_name: 'Post', foreign_key: :parent_id, dependent: :destroy
-  has_many :reposts, class_name: 'Post', foreign_key: :repost_of_id, dependent: :destroy
+  has_many :replies, class_name: "Post", foreign_key: :parent_id, dependent: :destroy
+  has_many :reposts, class_name: "Post", foreign_key: :repost_of_id, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :voters, through: :votes, source: :user
   has_many :bookmarks, dependent: :destroy
@@ -52,7 +52,7 @@ class Post < ApplicationRecord
         user: mentioned_user,
         actor: user,
         notifiable: self,
-        action: 'mentioned'
+        action: "mentioned"
       )
     end
   end
@@ -60,8 +60,8 @@ class Post < ApplicationRecord
   def trigger_webhooks
     user.webhooks.active.each do |webhook|
       events = JSON.parse(webhook.events) rescue []
-      if events.include?('post.created')
-        WebhookDeliveryJob.perform_later(webhook.id, 'post.created', as_json)
+      if events.include?("post.created")
+        WebhookDeliveryJob.perform_later(webhook.id, "post.created", as_json)
       end
     end
   end

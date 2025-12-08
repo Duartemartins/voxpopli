@@ -28,7 +28,7 @@ class Webhook < ApplicationRecord
 
   def validate_events
     parsed = JSON.parse(events) rescue []
-    errors.add(:events, 'must be present') if parsed.empty?
+    errors.add(:events, "must be present") if parsed.empty?
     invalid = parsed - EVENTS
     errors.add(:events, "contains invalid events: #{invalid.join(', ')}") if invalid.any?
   end

@@ -10,7 +10,7 @@ class InvitesController < ApplicationController
     if invite
       redirect_to new_user_registration_path(invite_code: code)
     else
-      flash.now[:alert] = 'Invalid or expired invite code'
+      flash.now[:alert] = "Invalid or expired invite code"
       render :new, status: :unprocessable_entity
     end
   end

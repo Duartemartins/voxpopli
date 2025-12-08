@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: [:show]
-  before_action :set_post, only: [:show, :destroy]
+  before_action :authenticate_user!, except: [ :show ]
+  before_action :set_post, only: [ :show, :destroy ]
 
   def show
     @replies = @post.replies.includes(:user).by_new
@@ -12,9 +12,9 @@ class PostsController < ApplicationController
     respond_to do |format|
       if @post.save
         format.turbo_stream
-        format.html { redirect_to timeline_path, notice: 'Post created' }
+        format.html { redirect_to timeline_path, notice: "Post created" }
       else
-        format.html { redirect_to timeline_path, alert: @post.errors.full_messages.join(', ') }
+        format.html { redirect_to timeline_path, alert: @post.errors.full_messages.join(", ") }
       end
     end
   end
@@ -24,10 +24,10 @@ class PostsController < ApplicationController
       @post.destroy
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.remove(@post) }
-        format.html { redirect_to timeline_path, notice: 'Post deleted' }
+        format.html { redirect_to timeline_path, notice: "Post deleted" }
       end
     else
-      redirect_to timeline_path, alert: 'Not authorized'
+      redirect_to timeline_path, alert: "Not authorized"
     end
   end
 

@@ -9,7 +9,7 @@ class CreateInvites < ActiveRecord::Migration[8.0]
       t.datetime :expires_at
       t.timestamps
     end
-    
+
     add_index :invites, :code, unique: true
   end
 end
