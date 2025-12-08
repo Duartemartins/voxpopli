@@ -41,13 +41,17 @@ module Api
       private
 
       def post_params
-        params.permit(:content, :theme_id, :parent_id)
+        permitted = params.permit(:body, :theme_id, :parent_id)
+        # Convert blank foreign keys to nil to avoid FOREIGN KEY constraint violations
+        permitted[:theme_id] = nil if permitted[:theme_id].blank?
+        permitted[:parent_id] = nil if permitted[:parent_id].blank?
+        permitted
       end
 
       def serialize_post(post)
         {
           id: post.id,
-          content: post.content,
+          body: post.body,
           score: post.score,
           votes_count: post.votes_count,
           replies_count: post.replies_count,

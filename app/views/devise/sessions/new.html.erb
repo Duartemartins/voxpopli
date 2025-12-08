@@ -5,24 +5,24 @@
     <div>
       <%= f.label :email, class: 'block text-sm font-medium text-gray-700' %>
       <%= f.email_field :email, autofocus: true, autocomplete: "email",
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent' %>
+          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent' %>
     </div>
 
     <div>
       <%= f.label :password, class: 'block text-sm font-medium text-gray-700' %>
       <%= f.password_field :password, autocomplete: "current-password",
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent' %>
+          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent' %>
     </div>
 
     <% if devise_mapping.rememberable? %>
       <div class="flex items-center">
-        <%= f.check_box :remember_me, class: 'h-4 w-4 text-indigo-600 border-gray-300 rounded' %>
+        <%= f.check_box :remember_me, class: 'h-4 w-4 text-[#003399] border-gray-300 rounded' %>
         <%= f.label :remember_me, class: 'ml-2 text-sm text-gray-700' %>
       </div>
     <% end %>
 
     <div class="pt-4">
-      <%= f.submit "Sign in", class: 'w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 cursor-pointer' %>
+      <%= f.submit "Sign in", class: 'w-full bg-[#003399] text-white px-4 py-2 rounded-lg hover:bg-[#002266] cursor-pointer' %>
     </div>
   <% end %>
 

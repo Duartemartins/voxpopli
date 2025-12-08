@@ -4,12 +4,13 @@ A privacy-first, open source microblogging platform.
 
 ## Features
 
+- **Twitter-like posts** - Simple text posts without character limits
 - **Invite-only registration** with email confirmation
 - **Username-based URLs** for user profiles (`/users/:username`)
 - **Timeline views** with "New" and "Top" sorting
 - **Upvote/downvote voting** system with score calculation
 - **Follows system** for personalized timelines
-- **Predefined themes** (Build in Public, Launch, Milestone, Question, Feedback)
+- **Predefined themes** - Currently "Build in Public" theme available
 - **Builder-friendly API** with API keys, rate limiting, and webhooks
 - **Privacy-first** - no tracking, minimal data collection, easy account deletion
 
@@ -49,8 +50,10 @@ bin/dev
 ### Initial Setup
 
 After running `db:seed`, you'll get:
-- 5 predefined themes
+- "Build in Public" theme
 - 10 invite codes (printed to console)
+- 5 test users (all with password: `password123`)
+- Sample posts to explore
 
 Use an invite code to register at `/join`.
 

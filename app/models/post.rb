@@ -10,7 +10,7 @@ class Post < ApplicationRecord
   has_many :voters, through: :votes, source: :user
   has_many :bookmarks, dependent: :destroy
 
-  validates :content, presence: true, length: { maximum: 280 }
+  validates :body, presence: true
 
   scope :by_new, -> { order(created_at: :desc) }
   scope :by_voted, -> { order(score: :desc, created_at: :desc) }
@@ -45,7 +45,7 @@ class Post < ApplicationRecord
   private
 
   def notify_mentions
-    mentioned_usernames = content.scan(/@([a-z0-9_]+)/i).flatten.uniq
+    mentioned_usernames = body.scan(/@([a-z0-9_]+)/i).flatten.uniq
     User.where(username: mentioned_usernames).find_each do |mentioned_user|
       next if mentioned_user == user
       Notification.create!(

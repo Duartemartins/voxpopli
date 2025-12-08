@@ -1,37 +1,31 @@
-<div id="<%= dom_id(post, :vote) %>" class="flex flex-col items-center gap-1">
-  <% user_vote = current_user ? post.vote_value_by(current_user) : 0 %>
-  
+<div id="vote_buttons_<%= post.id %>" class="flex flex-col items-center gap-1">
   <% if user_signed_in? %>
-    <%= button_to post_vote_path(post, value: 1), method: :post, 
-        class: "p-1 rounded #{user_vote == 1 ? 'text-green-500' : 'text-gray-400 hover:text-green-500'}" do %>
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+    <%= button_to post_vote_path(post, value: 1), method: :post, class: 'text-gray-400 hover:text-green-600' do %>
+      <svg class="w-5 h-5 <%= 'text-green-600' if post.votes.find_by(user: current_user)&.value == 1 %>" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
       </svg>
     <% end %>
   <% else %>
-    <div class="p-1 text-gray-300">
+    <span class="text-gray-300">
       <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
       </svg>
-    </div>
+    </span>
   <% end %>
   
-  <span class="font-medium <%= post.score > 0 ? 'text-green-600' : post.score < 0 ? 'text-red-600' : 'text-gray-500' %>">
-    <%= post.score %>
-  </span>
+  <span class="text-sm font-medium text-gray-700"><%= post.score %></span>
   
   <% if user_signed_in? %>
-    <%= button_to post_vote_path(post, value: -1), method: :post,
-        class: "p-1 rounded #{user_vote == -1 ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}" do %>
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+    <%= button_to post_vote_path(post, value: -1), method: :post, class: 'text-gray-400 hover:text-red-600' do %>
+      <svg class="w-5 h-5 <%= 'text-red-600' if post.votes.find_by(user: current_user)&.value == -1 %>" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
       </svg>
     <% end %>
   <% else %>
-    <div class="p-1 text-gray-300">
+    <span class="text-gray-300">
       <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
       </svg>
-    </div>
+    </span>
   <% end %>
 </div>

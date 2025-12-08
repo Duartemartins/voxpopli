@@ -4,7 +4,7 @@ class CreateThemes < ActiveRecord::Migration[8.0]
       t.string :name, null: false
       t.string :slug, null: false
       t.text :description
-      t.string :color, default: '#6366f1'
+      t.string :color, default: '#003399'
       t.integer :posts_count, default: 0
       t.timestamps
     end

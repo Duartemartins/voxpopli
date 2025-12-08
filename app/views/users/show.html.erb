@@ -12,7 +12,7 @@
         <% if @user.website.present? %>
           <p class="mt-1">
             <%= link_to @user.website.gsub(/^https?:\/\//, ''), @user.website, 
-                target: '_blank', rel: 'noopener', class: 'text-indigo-600 hover:underline' %>
+                target: '_blank', rel: 'noopener', class: 'text-[#003399] hover:underline' %>
           </p>
         <% end %>
       </div>
@@ -24,7 +24,7 @@
                 class: 'px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50' %>
           <% else %>
             <%= button_to 'Follow', user_follow_path(@user), method: :post,
-                class: 'px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700' %>
+                class: 'px-4 py-2 bg-[#003399] text-white rounded-lg hover:bg-[#002266]' %>
           <% end %>
         </div>
       <% end %>

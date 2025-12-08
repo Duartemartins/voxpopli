@@ -1,6 +1,8 @@
-# Forum - Rails 8 Twitter Alternative for Builders
+# voxpopli - Rails 8 Twitter Alternative for Builders
 
 A privacy and builder-first microblogging platform. Uses Rails 8 stock stack with SQLite, UUIDs throughout, username-based URLs, invite-only registration, email confirmation, predefined themes, and a builder-friendly API.
+
+**Brand Color:** #003399 (deep blue)
 
 ---
 
@@ -9,8 +11,8 @@ A privacy and builder-first microblogging platform. Uses Rails 8 stock stack wit
 Create the application:
 
 ```bash
-rails new forum --database=sqlite3 --css=tailwind
-cd forum
+rails new voxpopli --database=sqlite3 --css=tailwind
+cd voxpopli
 ```
 
 In `config/application.rb`, add inside the `Application` class:
@@ -86,7 +88,7 @@ Configure Proton Mail SMTP in `config/environments/production.rb`:
 ```ruby
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = {
-  address: "smtp.protonmail.ch",
+  address: "smtp.protonmail.me",
   port: 587,
   domain: "yourdomain.com",
   user_name: Rails.application.credentials.dig(:proton, :username),

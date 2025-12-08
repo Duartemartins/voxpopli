@@ -25,7 +25,7 @@
   <body class="bg-gray-50 min-h-screen">
     <nav class="bg-white border-b border-gray-200">
       <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-        <%= link_to 'voxpopli', root_path, class: 'text-xl font-bold text-indigo-600' %>
+        <%= link_to 'voxpopli', root_path, class: 'text-xl font-bold text-[#003399]' %>
         <div class="flex items-center gap-4">
           <% if user_signed_in? %>
             <%= link_to current_user.username, user_path(current_user), class: 'text-gray-600 hover:text-gray-900' %>
@@ -33,7 +33,7 @@
             <%= button_to 'Sign out', destroy_user_session_path, method: :delete, class: 'text-gray-600 hover:text-gray-900' %>
           <% else %>
             <%= link_to 'Sign in', new_user_session_path, class: 'text-gray-600 hover:text-gray-900' %>
-            <%= link_to 'Sign up', join_path, class: 'bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700' %>
+            <%= link_to 'Sign up', join_path, class: 'bg-[#003399] text-white px-4 py-2 rounded-lg hover:bg-[#002266]' %>
           <% end %>
         </div>
       </div>

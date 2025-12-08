@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_08_172813) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_08_182208) do
 # Could not dump table "api_keys" because of following StandardError
 #   Unknown type 'uuid' for column 'id'
 
@@ -32,7 +32,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_172813) do
 
 
 # Could not dump table "posts" because of following StandardError
-#   Unknown type 'uuid' for column 'id'
+#   Unknown type '' for column 'id'
 
 
 # Could not dump table "themes" because of following StandardError
