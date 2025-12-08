@@ -38,7 +38,7 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    permitted = params.require(:post).permit(:body, :theme_id, :parent_id)
+    permitted = params.require(:post).permit(:body, :theme_id, :parent_id, :image)
     # Convert blank foreign keys to nil to avoid FOREIGN KEY constraint violations
     permitted[:theme_id] = nil if permitted[:theme_id].blank?
     permitted[:parent_id] = nil if permitted[:parent_id].blank?

@@ -132,4 +132,48 @@ class PostTest < ActiveSupport::TestCase
     )
     assert_match(/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i, post.id)
   end
+
+  test "can attach image" do
+    post = Post.new(
+      body: "Post with image",
+      user: users(:alice)
+    )
+    post.image.attach(
+      io: StringIO.new("fake image data"),
+      filename: "test.jpg",
+      content_type: "image/jpeg"
+    )
+    assert post.valid?
+    assert post.image.attached?
+  end
+
+  test "validates image content type" do
+    post = Post.new(
+      body: "Post with bad image",
+      user: users(:alice)
+    )
+    post.image.attach(
+      io: StringIO.new("fake data"),
+      filename: "test.exe",
+      content_type: "application/octet-stream"
+    )
+    assert_not post.valid?
+    assert_includes post.errors[:image], "must be a JPEG, PNG, GIF, or WebP"
+  end
+
+  test "validates image size" do
+    post = Post.new(
+      body: "Post with large image",
+      user: users(:alice)
+    )
+    # Create a fake 6MB file
+    large_data = "x" * 6.megabytes
+    post.image.attach(
+      io: StringIO.new(large_data),
+      filename: "large.jpg",
+      content_type: "image/jpeg"
+    )
+    assert_not post.valid?
+    assert_includes post.errors[:image], "must be less than 5MB"
+  end
 end

@@ -10,7 +10,10 @@ class Post < ApplicationRecord
   has_many :voters, through: :votes, source: :user
   has_many :bookmarks, dependent: :destroy
 
+  has_one_attached :image
+
   validates :body, presence: true
+  validate :acceptable_image
 
   scope :by_new, -> { order(created_at: :desc) }
   scope :by_voted, -> { order(score: :desc, created_at: :desc) }
@@ -63,6 +66,18 @@ class Post < ApplicationRecord
       if events.include?("post.created")
         WebhookDeliveryJob.perform_later(webhook.id, "post.created", as_json)
       end
+    end
+  end
+
+  def acceptable_image
+    return unless image.attached?
+
+    unless image.blob.content_type.in?(%w[image/jpeg image/png image/gif image/webp])
+      errors.add(:image, "must be a JPEG, PNG, GIF, or WebP")
+    end
+
+    if image.blob.byte_size > 5.megabytes
+      errors.add(:image, "must be less than 5MB")
     end
   end
 end

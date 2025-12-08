@@ -121,4 +121,32 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
     delete post_path(@post), as: :turbo_stream
     assert_response :success
   end
+
+  test "create post with image" do
+    sign_in @user
+
+    image = fixture_file_upload("test_image.jpg", "image/jpeg")
+
+    assert_difference "Post.count", 1 do
+      post posts_path, params: { post: { body: "Post with image", image: image } }
+    end
+
+    new_post = Post.find_by(body: "Post with image")
+    assert_not_nil new_post
+    assert new_post.image.attached?
+    assert_redirected_to timeline_path
+  end
+
+  test "create post with invalid image type shows error" do
+    sign_in @user
+
+    invalid_file = fixture_file_upload("test_file.txt", "text/plain")
+
+    assert_no_difference "Post.count" do
+      post posts_path, params: { post: { body: "Post with invalid file", image: invalid_file } }
+    end
+
+    assert_redirected_to timeline_path
+    assert_match(/must be a JPEG, PNG, GIF, or WebP/, flash[:alert])
+  end
 end
