@@ -4,6 +4,12 @@
       <%= render 'posts/vote_buttons', post: post %>
     </div>
     
+    <div class="flex-shrink-0">
+      <%= link_to user_path(post.user) do %>
+        <%= avatar_for(post.user, size: :small) %>
+      <% end %>
+    </div>
+    
     <div class="flex-1 min-w-0">
       <div class="flex items-center gap-2 text-sm text-gray-500">
         <%= link_to post.user.username, user_path(post.user), class: 'font-medium text-gray-900 hover:underline' %>
