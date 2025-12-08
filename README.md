@@ -1,24 +1,81 @@
-# README
+# Voxpopli
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A privacy-first, open source microblogging platform. 
 
-Things you may want to cover:
+## Features
 
-* Ruby version
+- **Invite-only registration** with email confirmation
+- **Username-based URLs** for user profiles (`/users/:username`)
+- **Timeline views** with "New" and "Top" sorting
+- **Upvote/downvote voting** system with score calculation
+- **Follows system** for personalized timelines
+- **Predefined themes** (Build in Public, Launch, Milestone, Question, Feedback)
+- **Builder-friendly API** with API keys, rate limiting, and webhooks
+- **Privacy-first** - no tracking, minimal data collection, easy account deletion
 
-* System dependencies
+## Tech Stack
 
-* Configuration
+- **Rails 8** with SQLite3
+- **Tailwind CSS** for styling
+- **Hotwire (Turbo + Stimulus)** for interactivity
+- **Solid Queue/Cache/Cable** (no Redis needed)
+- **Importmaps** (no Node.js required)
+- **Kamal** for deployment
 
-* Database creation
+## Getting Started
 
-* Database initialization
+### Prerequisites
 
-* How to run the test suite
+- Ruby 3.3+
+- SQLite3
 
-* Services (job queues, cache servers, search engines, etc.)
+### Installation
 
-* Deployment instructions
+```bash
+# Clone the repository
+git clone https://github.com/duartemartins/voxpopli.git
+cd voxpopli
 
-* ...
+# Install dependencies
+bundle install
+
+# Setup database
+rails db:create db:migrate db:seed
+
+# Start the server
+bin/dev
+```
+
+### Initial Setup
+
+After running `db:seed`, you'll get:
+- 5 predefined themes
+- 10 invite codes (printed to console)
+
+Use an invite code to register at `/join`.
+
+## API
+
+The API is available at `/api/v1/` with the following endpoints:
+
+- `GET /api/v1/posts` - List posts
+- `GET /api/v1/posts/:id` - Get a post
+- `POST /api/v1/posts` - Create a post
+- `DELETE /api/v1/posts/:id` - Delete a post
+- `POST /api/v1/posts/:id/vote` - Vote on a post
+- `GET /api/v1/themes` - List themes
+- `GET /api/v1/me` - Get current user
+
+Authentication is done via API keys in the `Authorization` header.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is open source and available under the [GNU General Public License v3.0](LICENSE).
+
+## Acknowledgments
+
+Built with ❤️ for the indie hacker community.
