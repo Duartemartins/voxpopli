@@ -29,6 +29,11 @@ class User < ApplicationRecord
             length: { minimum: 3, maximum: 20 },
             exclusion: { in: RESERVED_USERNAMES, message: "is reserved" }
 
+  validates :website, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+            message: "must be a valid URL" }, allow_blank: true
+  validates :avatar_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+            message: "must be a valid URL" }, allow_blank: true
+
   normalizes :username, with: ->(u) { u.strip.downcase }
   normalizes :email, with: ->(e) { e.strip.downcase }
 

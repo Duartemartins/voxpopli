@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     resource :vote, only: [ :create, :destroy ]
   end
 
-  resources :users, param: :username, only: [ :show ] do
+  resources :users, param: :username, only: [ :show, :edit, :update ] do
     resource :follow, only: [ :create, :destroy ]
   end
 

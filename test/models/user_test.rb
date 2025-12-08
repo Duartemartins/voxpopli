@@ -150,4 +150,50 @@ class UserTest < ActiveSupport::TestCase
     )
     assert_equal "test@example.com", user.email
   end
+
+  test "website must be a valid url" do
+    user = users(:alice)
+
+    user.website = "not-a-url"
+    assert_not user.valid?
+    assert_includes user.errors[:website], "must be a valid URL"
+
+    user.website = "ftp://invalid.com"
+    assert_not user.valid?
+
+    user.website = "http://valid.com"
+    assert user.valid?
+
+    user.website = "https://valid.com"
+    assert user.valid?
+
+    user.website = ""
+    assert user.valid?
+
+    user.website = nil
+    assert user.valid?
+  end
+
+  test "avatar_url must be a valid url" do
+    user = users(:alice)
+
+    user.avatar_url = "not-a-url"
+    assert_not user.valid?
+    assert_includes user.errors[:avatar_url], "must be a valid URL"
+
+    user.avatar_url = "ftp://invalid.com/avatar.png"
+    assert_not user.valid?
+
+    user.avatar_url = "http://valid.com/avatar.png"
+    assert user.valid?
+
+    user.avatar_url = "https://valid.com/avatar.png"
+    assert user.valid?
+
+    user.avatar_url = ""
+    assert user.valid?
+
+    user.avatar_url = nil
+    assert user.valid?
+  end
 end
