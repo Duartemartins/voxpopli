@@ -1,0 +1,28 @@
+<div class="max-w-md mx-auto">
+  <h2 class="text-2xl font-bold mb-2">Join Voxpopli</h2>
+  <p class="text-gray-600 mb-6">Enter your invite code to create an account.</p>
+
+  <%= form_with url: verify_invite_path, method: :post, class: 'space-y-4' do |f| %>
+    <div>
+      <%= label_tag :code, 'Invite Code', class: 'block text-sm font-medium text-gray-700' %>
+      <%= text_field_tag :code, params[:code], 
+          autofocus: true, 
+          autocomplete: "off",
+          placeholder: "Enter your invite code",
+          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent uppercase' %>
+    </div>
+
+    <div class="pt-4">
+      <%= submit_tag 'Continue', class: 'w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 cursor-pointer' %>
+    </div>
+  <% end %>
+
+  <div class="mt-6 text-center text-sm text-gray-500">
+    <p>Already have an account? <%= link_to 'Sign in', new_user_session_path, class: 'text-indigo-600 hover:underline' %></p>
+  </div>
+
+  <div class="mt-8 p-4 bg-gray-100 rounded-lg text-sm text-gray-600">
+    <p class="font-medium text-gray-700 mb-2">Don't have an invite code?</p>
+    <p>Voxpopli is currently invite-only. Ask a member for an invite or follow us for announcements about open registration.</p>
+  </div>
+</div>

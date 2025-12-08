@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@post, :vote) do %>
+  <%= render partial: 'posts/vote_buttons', locals: { post: @post } %>
+<% end %>

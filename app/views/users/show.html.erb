@@ -1,0 +1,51 @@
+<div class="space-y-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">
+          <%= @user.display_name || @user.username %>
+        </h1>
+        <p class="text-gray-500">@<%= @user.username %></p>
+        <% if @user.bio.present? %>
+          <p class="mt-2 text-gray-700"><%= @user.bio %></p>
+        <% end %>
+        <% if @user.website.present? %>
+          <p class="mt-1">
+            <%= link_to @user.website.gsub(/^https?:\/\//, ''), @user.website, 
+                target: '_blank', rel: 'noopener', class: 'text-indigo-600 hover:underline' %>
+          </p>
+        <% end %>
+      </div>
+      
+      <% if user_signed_in? && current_user != @user %>
+        <div id="follow_<%= @user.id %>">
+          <% if current_user.following?(@user) %>
+            <%= button_to 'Unfollow', user_follow_path(@user), method: :delete,
+                class: 'px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50' %>
+          <% else %>
+            <%= button_to 'Follow', user_follow_path(@user), method: :post,
+                class: 'px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700' %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="mt-4 flex gap-4 text-sm">
+      <span><strong><%= @user.posts_count %></strong> posts</span>
+      <span><strong><%= @user.followers_count %></strong> followers</span>
+      <span><strong><%= @user.following_count %></strong> following</span>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    <% if @posts.any? %>
+      <%= render @posts %>
+    <% else %>
+      <p class="text-center py-8 text-gray-500">No posts yet</p>
+    <% end %>
+  </div>
+
+  <div class="mt-6">
+    <%= paginate @posts %>
+  </div>
+</div>
