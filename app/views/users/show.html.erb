@@ -13,7 +13,8 @@
         <% end %>
         <% if @user.website.present? %>
           <p class="mt-1">
-            <%= link_to @user.website.gsub(/^https?:\/\//, ''), @user.website, 
+            <span class="text-gray-500">🔗</span>
+            <%= link_to @user.website.gsub(/^https?:\/\//, '').chomp('/'), @user.website, 
                 target: '_blank', rel: 'noopener', class: 'text-[#003399] hover:underline' %>
           </p>
         <% end %>

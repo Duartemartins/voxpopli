@@ -230,7 +230,7 @@ class VoteTest < ActiveSupport::TestCase
       active: true
     )
     # Corrupt the events JSON directly in database
-    webhook.update_column(:events, 'invalid json')
+    webhook.update_column(:events, "invalid json")
 
     # Clear any existing votes
     Vote.where(user: alice, post: bob_post).destroy_all
