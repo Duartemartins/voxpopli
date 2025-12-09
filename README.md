@@ -1,5 +1,9 @@
 # Voxpopli
 
+![Test Coverage](https://img.shields.io/badge/coverage-88.82%25-brightgreen)
+![Ruby](https://img.shields.io/badge/ruby-3.3%2B-red)
+![Rails](https://img.shields.io/badge/rails-8.0-red)
+
 A privacy-first, open source microblogging platform. 
 
 ## Features
@@ -16,6 +20,7 @@ A privacy-first, open source microblogging platform.
 - **No Link Nerfing** - post whatever links you'd like
 - **No Rage-content promoting algorithm**
 - **Open Source**
+- **Do-Follow link on your profile page**
 
 ## Tech Stack
 
