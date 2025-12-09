@@ -155,6 +155,59 @@ module Api
         # Will be unauthorized because token doesn't match
         assert_response :unauthorized
       end
+
+      # Base controller branch coverage tests
+      test "authenticate with nil Authorization header" do
+        get api_v1_posts_path, as: :json
+        assert_response :unauthorized
+        json = JSON.parse(response.body)
+        assert_equal "Invalid or missing API key", json["error"]
+      end
+
+      test "authenticate with empty Authorization header" do
+        get api_v1_posts_path,
+            headers: { "Authorization" => "" },
+            as: :json
+        assert_response :unauthorized
+      end
+
+      test "authenticate with Authorization header with only Bearer" do
+        get api_v1_posts_path,
+            headers: { "Authorization" => "Bearer " },
+            as: :json
+        assert_response :unauthorized
+      end
+
+      test "rate limit exceeded returns too many requests" do
+        api_key = ApiKey.create!(user: @user, name: "Rate Limited Key")
+        token = api_key.raw_key
+
+        # Manually set the API key to exceed rate limit
+        api_key.update_columns(requests_count: api_key.rate_limit)
+
+        get api_v1_posts_path,
+            headers: { "Authorization" => "Bearer #{token}" },
+            as: :json
+
+        assert_response :too_many_requests
+        json = JSON.parse(response.body)
+        assert_equal "Rate limit exceeded", json["error"]
+        assert json.key?("retry_after")
+      end
+
+      test "rate limit not exceeded increments usage" do
+        api_key = ApiKey.create!(user: @user, name: "Fresh Key")
+        token = api_key.raw_key
+        initial_count = api_key.requests_count
+
+        get api_v1_posts_path,
+            headers: { "Authorization" => "Bearer #{token}" },
+            as: :json
+
+        assert_response :success
+        api_key.reload
+        assert_equal initial_count + 1, api_key.requests_count
+      end
     end
   end
 end

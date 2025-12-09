@@ -157,4 +157,46 @@ class InviteTest < ActiveSupport::TestCase
     assert_nil invite.invitee
     assert invite.valid?
   end
+
+  test "available? with nil used_at and nil expires_at returns true" do
+    invite = Invite.create!(inviter: users(:alice))
+    invite.update_columns(used_at: nil, expires_at: nil)
+    assert invite.available?
+  end
+
+  test "available? with nil used_at and future expires_at returns true" do
+    invite = Invite.create!(inviter: users(:alice), expires_at: 1.week.from_now)
+    assert invite.available?
+  end
+
+  test "available? with nil used_at and past expires_at returns false" do
+    invite = Invite.create!(inviter: users(:alice))
+    invite.update_columns(expires_at: 1.day.ago)
+    assert_not invite.available?
+  end
+
+  test "available? with present used_at returns false regardless of expires_at" do
+    invite = Invite.create!(inviter: users(:alice))
+    invite.update_columns(used_at: Time.current, expires_at: 1.week.from_now)
+    assert_not invite.available?
+  end
+
+  test "not_expired validates both conditions independently" do
+    # Test invite that is both expired AND used
+    invite = Invite.create!(inviter: users(:alice))
+    invite.update_columns(
+      used_at: 1.day.ago,
+      expires_at: 1.day.ago
+    )
+
+    assert_not invite.valid?(:use)
+    assert_includes invite.errors[:base], "Invite has expired"
+    assert_includes invite.errors[:base], "Invite has already been used"
+  end
+
+  test "not_expired does not add errors for valid invite on use context" do
+    invite = Invite.create!(inviter: users(:alice), expires_at: 1.week.from_now)
+    assert invite.valid?(:use)
+    assert_empty invite.errors[:base]
+  end
 end

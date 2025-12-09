@@ -7,6 +7,7 @@ SimpleCov.start "rails" do
   add_filter "/config/"
   add_filter "/vendor/"
   add_filter "/db/"
+  add_filter "/app/views/"  # Exclude views - ERB coverage is unreliable with parallel tests
 
   add_group "Models", "app/models"
   add_group "Controllers", "app/controllers"

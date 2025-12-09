@@ -362,4 +362,56 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
       }
     end
   end
+
+  test "destroy with sign_out_all_scopes true signs out completely" do
+    # This tests the Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name) branch
+    user = User.create!(
+      username: "allscopesuser",
+      email: "allscopes@example.com",
+      password: "password123"
+    )
+    sign_in user
+
+    # Store original value
+    original_value = Devise.sign_out_all_scopes
+
+    begin
+      Devise.sign_out_all_scopes = true
+      delete user_registration_path
+      assert_redirected_to root_path
+    ensure
+      Devise.sign_out_all_scopes = original_value
+    end
+  end
+
+  test "destroy with sign_out_all_scopes false signs out resource only" do
+    user = User.create!(
+      username: "onescopeuser",
+      email: "onescope@example.com",
+      password: "password123"
+    )
+    sign_in user
+
+    original_value = Devise.sign_out_all_scopes
+
+    begin
+      Devise.sign_out_all_scopes = false
+      delete user_registration_path
+      assert_redirected_to root_path
+    ensure
+      Devise.sign_out_all_scopes = original_value
+    end
+  end
+
+  test "validate_invite_code with nil code redirects" do
+    get new_user_registration_path, params: { invite_code: nil }
+    assert_redirected_to root_path
+    assert_equal "Valid invite code required to register", flash[:alert]
+  end
+
+  test "validate_invite_code with empty code redirects" do
+    get new_user_registration_path, params: { invite_code: "" }
+    assert_redirected_to root_path
+    assert_equal "Valid invite code required to register", flash[:alert]
+  end
 end

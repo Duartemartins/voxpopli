@@ -47,4 +47,9 @@ class InvitesControllerTest < ActionDispatch::IntegrationTest
     post verify_invite_path, params: { code: "  #{@valid_invite.code}  " }
     assert_redirected_to new_user_registration_path(invite_code: @valid_invite.code)
   end
+
+  test "verify with nil code shows error" do
+    post verify_invite_path, params: { code: nil }
+    assert_response :unprocessable_entity
+  end
 end
