@@ -11,8 +11,11 @@ A privacy-first, open source microblogging platform.
 - **Upvote/downvote voting** system with score calculation
 - **Follows system** for personalized timelines
 - **Predefined themes** - Currently "Build in Public" theme available
-- **Builder-friendly API** with API keys, rate limiting, and webhooks
+- **Free, Builder-friendly API** with API keys, rate limiting, and webhooks
 - **Privacy-first** - no tracking, minimal data collection, easy account deletion
+- **No Link Nerfing** - post whatever links you'd like
+- **No Rage-content promoting algorithm**
+- **Open Source**
 
 ## Tech Stack
 

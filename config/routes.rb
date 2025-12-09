@@ -18,6 +18,7 @@ Rails.application.routes.draw do
 
   namespace :settings do
     resource :account, only: [ :show, :destroy ]
+    resources :api_keys, only: [ :index, :create, :destroy ]
   end
 
   namespace :api do

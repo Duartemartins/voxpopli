@@ -1,0 +1,91 @@
+<div class="max-w-2xl space-y-6">
+  <h1 class="text-2xl font-bold">API Keys</h1>
+
+  <% if flash[:api_key] %>
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+      <h3 class="font-medium text-green-800">Your new API key</h3>
+      <p class="mt-1 text-sm text-green-700">Copy this key now. You won't be able to see it again!</p>
+      <div class="mt-2 flex items-center gap-2">
+        <code id="api-key-value" class="flex-1 bg-green-100 px-3 py-2 rounded font-mono text-sm break-all"><%= flash[:api_key] %></code>
+        <button type="button" onclick="copyApiKey()" class="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+          Copy
+        </button>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-medium">Create New API Key</h2>
+    <p class="mt-1 text-sm text-gray-600">API keys allow you to access the Voxpopli API programmatically.</p>
+
+    <%= form_with model: [:settings, ApiKey.new], class: "mt-4" do |f| %>
+      <div class="flex gap-3">
+        <%= f.text_field :name, 
+            placeholder: "Key name (e.g., My App)", 
+            required: true,
+            class: "flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        <%= f.submit "Create API Key", 
+            class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @api_keys.any? %>
+    <div class="bg-white rounded-lg shadow">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium">Your API Keys</h2>
+      </div>
+      <ul class="divide-y divide-gray-200">
+        <% @api_keys.each do |api_key| %>
+          <li class="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p class="font-medium"><%= api_key.name %></p>
+              <p class="text-sm text-gray-500">
+                <code class="bg-gray-100 px-1 rounded"><%= api_key.key_prefix %>...</code>
+                · Created <%= time_ago_in_words(api_key.created_at) %> ago
+                <% if api_key.last_used_at %>
+                  · Last used <%= time_ago_in_words(api_key.last_used_at) %> ago
+                <% else %>
+                  · Never used
+                <% end %>
+              </p>
+            </div>
+            <%= button_to "Revoke", settings_api_key_path(api_key), 
+                method: :delete,
+                class: "text-red-600 hover:text-red-800 text-sm font-medium",
+                data: { turbo_confirm: "Are you sure you want to revoke this API key?" } %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="bg-gray-50 rounded-lg p-6">
+    <h2 class="text-lg font-medium">API Documentation</h2>
+    <p class="mt-1 text-sm text-gray-600">Use your API key in the Authorization header:</p>
+    <pre class="mt-3 bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm">curl -H "Authorization: Bearer YOUR_API_KEY" \
+  <%= request.base_url %>/api/v1/me</pre>
+    
+    <h3 class="mt-4 font-medium">Available Endpoints</h3>
+    <ul class="mt-2 text-sm text-gray-600 space-y-1">
+      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/me</code> - Your profile</li>
+      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/posts</code> - List posts</li>
+      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/posts/:id</code> - Get a post</li>
+      <li><code class="bg-gray-200 px-1 rounded">POST /api/v1/posts</code> - Create a post</li>
+      <li><code class="bg-gray-200 px-1 rounded">DELETE /api/v1/posts/:id</code> - Delete your post</li>
+      <li><code class="bg-gray-200 px-1 rounded">POST /api/v1/posts/:post_id/vote</code> - Vote on a post</li>
+      <li><code class="bg-gray-200 px-1 rounded">DELETE /api/v1/posts/:post_id/vote</code> - Remove vote</li>
+      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/themes</code> - List themes</li>
+      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/themes/:id</code> - Get a theme</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+function copyApiKey() {
+  const key = document.getElementById('api-key-value').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    alert('API key copied to clipboard!');
+  });
+}
+</script>
