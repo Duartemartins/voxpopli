@@ -1,5 +1,6 @@
 class RegistrationsController < Devise::RegistrationsController
   before_action :validate_invite_code, only: [ :new, :create ]
+  before_action :check_honeypot, only: [ :create ]
 
   def new
     @invite = Invite.available.find_by!(code: params[:invite_code])
@@ -29,6 +30,13 @@ class RegistrationsController < Devise::RegistrationsController
     code = params[:invite_code] || params.dig(:user, :invite_code)
     unless code.present? && Invite.available.exists?(code: code)
       redirect_to root_path, alert: "Valid invite code required to register"
+    end
+  end
+
+  def check_honeypot
+    # Honeypot field - should be empty (bots often fill hidden fields)
+    if params[:user][:website_url].present?
+      redirect_to root_path, alert: "Registration failed"
     end
   end
 end

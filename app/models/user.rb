@@ -4,8 +4,11 @@ class User < ApplicationRecord
                           login logout signup register auth oauth
                           help support contact about terms privacy].freeze
 
+  # Virtual attributes for registration
+  attr_accessor :invite_code, :website_url
+
   devise :database_authenticatable, :registerable, :recoverable,
-         :rememberable, :validatable, :confirmable
+         :rememberable, :validatable
 
   has_many :posts, dependent: :destroy
   has_many :votes, dependent: :destroy

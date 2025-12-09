@@ -6,6 +6,11 @@
 
     <%= f.hidden_field :invite_code, value: @invite&.code || params[:invite_code] %>
 
+    <%# Honeypot field - hidden from real users, bots will fill it %>
+    <div class="hidden" aria-hidden="true">
+      <%= f.text_field :website_url, tabindex: "-1", autocomplete: "off" %>
+    </div>
+
     <div>
       <%= f.label :username, class: 'block text-sm font-medium text-gray-700' %>
       <%= f.text_field :username, autofocus: true, autocomplete: "username", 
