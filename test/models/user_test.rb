@@ -196,4 +196,99 @@ class UserTest < ActiveSupport::TestCase
     user.avatar_url = nil
     assert user.valid?
   end
+
+  test "ensure_invite_codes! creates 5 invite codes for new user" do
+    user = User.create!(
+      email: "newinviteuser@example.com",
+      username: "newinviteuser",
+      password: "password123"
+    )
+    assert_equal 0, user.invites_sent.count
+
+    codes = user.ensure_invite_codes!
+
+    assert_equal 5, codes.count
+    assert_equal 5, user.invites_sent.count
+    codes.each do |invite|
+      assert_not_nil invite.code
+      assert invite.available?
+      assert_equal user, invite.inviter
+    end
+  end
+
+  test "ensure_invite_codes! does not create more than 5 codes" do
+    user = User.create!(
+      email: "limituser@example.com",
+      username: "limituser",
+      password: "password123"
+    )
+    user.ensure_invite_codes!
+
+    # Call again - should not create more
+    user.ensure_invite_codes!
+
+    assert_equal 5, user.invites_sent.count
+  end
+
+  test "ensure_invite_codes! fills up to 5 if user has fewer" do
+    user = User.create!(
+      email: "partialuser@example.com",
+      username: "partialuser",
+      password: "password123"
+    )
+
+    # Create only 2 invites manually
+    2.times { user.invites_sent.create! }
+    assert_equal 2, user.invites_sent.count
+
+    user.ensure_invite_codes!
+
+    assert_equal 5, user.invites_sent.count
+  end
+
+  test "invite_codes returns user invites in order" do
+    user = User.create!(
+      email: "orderuser@example.com",
+      username: "orderuser",
+      password: "password123"
+    )
+    user.ensure_invite_codes!
+
+    codes = user.invite_codes
+    assert_equal 5, codes.count
+    assert codes.first.created_at <= codes.last.created_at
+  end
+
+  test "invite code cannot be reused after being used" do
+    inviter = User.create!(
+      email: "inviter@example.com",
+      username: "inviter",
+      password: "password123"
+    )
+    invitee = User.create!(
+      email: "invitee@example.com",
+      username: "invitee",
+      password: "password123"
+    )
+
+    inviter.ensure_invite_codes!
+    invite = inviter.invite_codes.first
+
+    assert invite.available?
+    invite.use!(invitee)
+
+    assert_not invite.available?
+    assert_equal invitee, invite.invitee
+    assert_not_nil invite.used_at
+
+    # Try to use again
+    another_user = User.create!(
+      email: "another@example.com",
+      username: "anotheruser",
+      password: "password123"
+    )
+    assert_raises(RuntimeError, "Invite already used") do
+      invite.use!(another_user)
+    end
+  end
 end

@@ -63,4 +63,20 @@ class User < ApplicationRecord
         .where(parent_id: nil)
         .includes(:user, :theme)
   end
+
+  INVITE_CODES_LIMIT = 5
+
+  def invite_codes
+    invites_sent.order(:created_at)
+  end
+
+  def generate_invite_codes!
+    remaining = INVITE_CODES_LIMIT - invites_sent.count
+    remaining.times { invites_sent.create! }
+  end
+
+  def ensure_invite_codes!
+    generate_invite_codes! if invites_sent.count < INVITE_CODES_LIMIT
+    invite_codes
+  end
 end

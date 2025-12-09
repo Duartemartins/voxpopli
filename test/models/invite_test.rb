@@ -79,4 +79,82 @@ class InviteTest < ActiveSupport::TestCase
       invite.use!(users(:charlie))
     end
   end
+
+  test "requires code presence" do
+    invite = Invite.new(inviter: users(:alice))
+    invite.code = nil
+    # Force validation without triggering before_validation callback
+    invite.instance_variable_set(:@_skip_generate_code, true)
+
+    # Since generate_code sets code on create, we need to test after create
+    # by manually clearing it
+    invite.save!
+    invite.code = nil
+    assert_not invite.valid?
+    assert_includes invite.errors[:code], "can't be blank"
+  end
+
+  test "does not overwrite existing code on create" do
+    custom_code = "MYCUSTOMCODE1"
+    invite = Invite.create!(code: custom_code, inviter: users(:alice))
+    assert_equal custom_code, invite.code
+  end
+
+  test "available? returns true for invite with future expiry" do
+    invite = Invite.create!(
+      inviter: users(:alice),
+      expires_at: 1.week.from_now
+    )
+    assert invite.available?
+  end
+
+  test "not_expired validation adds expired error on use context" do
+    invite = Invite.create!(
+      inviter: users(:alice),
+      expires_at: 1.day.ago
+    )
+    assert_not invite.valid?(:use)
+    assert_includes invite.errors[:base], "Invite has expired"
+  end
+
+  test "not_expired validation adds already used error on use context" do
+    invite = invites(:used_invite)
+    assert_not invite.valid?(:use)
+    assert_includes invite.errors[:base], "Invite has already been used"
+  end
+
+  test "scope available excludes used invites" do
+    used_invite = invites(:used_invite)
+    assert_not_includes Invite.available, used_invite
+  end
+
+  test "scope available excludes expired invites" do
+    expired_invite = invites(:expired_invite)
+    assert_not_includes Invite.available, expired_invite
+  end
+
+  test "scope available includes invites with future expiry" do
+    future_invite = Invite.create!(
+      inviter: users(:alice),
+      expires_at: 1.week.from_now
+    )
+    assert_includes Invite.available, future_invite
+  end
+
+  test "scope available includes invites with no expiry" do
+    no_expiry_invite = invites(:no_expiry_invite)
+    assert_includes Invite.available, no_expiry_invite
+  end
+
+  test "inviter association is optional" do
+    invite = Invite.create!
+    assert_nil invite.inviter
+    assert invite.valid?
+  end
+
+  test "invitee association is optional" do
+    invite = Invite.create!(inviter: users(:alice))
+    assert_nil invite.invitee
+    assert invite.valid?
+  end
 end

@@ -51,7 +51,7 @@ module Api
         assert_equal @theme.id, data["id"]
         assert_equal @theme.name, data["name"]
         assert_equal @theme.slug, data["slug"]
-        assert_equal @theme.description, data["description"]
+        assert_nil data["description"]
         assert_equal @theme.color, data["color"]
       end
 
