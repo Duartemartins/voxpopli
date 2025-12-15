@@ -47,7 +47,7 @@ class DirectoryController < ApplicationController
 
   def show
     @builder = User.find_by!(username: params[:username])
-    
+
     # Redirect to the main user profile page
     redirect_to user_path(@builder.username), status: :moved_permanently
   end
@@ -67,7 +67,7 @@ class DirectoryController < ApplicationController
   end
 
   def collect_all_skills
-    skills_arrays = User.where.not(skills: [nil, "", "[]"]).pluck(:skills)
+    skills_arrays = User.where.not(skills: [ nil, "", "[]" ]).pluck(:skills)
     skills_arrays.flat_map do |skills_json|
       begin
         JSON.parse(skills_json.is_a?(String) ? skills_json : skills_json.to_json)
@@ -79,8 +79,8 @@ class DirectoryController < ApplicationController
 
   def collect_all_products
     users_with_products = User.where.not(confirmed_at: nil)
-                              .where.not(launched_products: [nil, "", "[]"])
-    
+                              .where.not(launched_products: [ nil, "", "[]" ])
+
     products = []
     users_with_products.find_each do |user|
       user.launched_products_list.each do |product|
@@ -94,8 +94,8 @@ class DirectoryController < ApplicationController
         }
       end
     end
-    
+
     # Sort by MRR (highest first), then by name
-    products.sort_by { |p| [-(p[:mrr].to_i), p[:name].to_s.downcase] }
+    products.sort_by { |p| [ -(p[:mrr].to_i), p[:name].to_s.downcase ] }
   end
 end

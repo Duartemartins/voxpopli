@@ -31,14 +31,14 @@ end
 
 # Create test users with builder profile data
 users_data = [
-  { 
-    email: 'alice@example.com', 
-    username: 'alice', 
-    display_name: 'Alice Builder', 
+  {
+    email: 'alice@example.com',
+    username: 'alice',
+    display_name: 'Alice Builder',
     bio: 'Building cool stuff. Indie hacker. Coffee enthusiast.',
     tagline: 'Shipping indie products one coffee at a time',
     github_username: 'alicebuilder',
-    skills: ['Ruby', 'Rails', 'JavaScript', 'Tailwind CSS'],
+    skills: [ 'Ruby', 'Rails', 'JavaScript', 'Tailwind CSS' ],
     looking_for: 'cofounders',
     website: 'https://alicebuilder.dev',
     launched_products: [
@@ -46,14 +46,14 @@ users_data = [
       { 'name' => 'LaunchKit', 'url' => 'https://launchkit.io', 'description' => 'Landing page templates for SaaS', 'mrr' => 800, 'revenue_confirmed' => true }
     ]
   },
-  { 
-    email: 'bob@example.com', 
-    username: 'bob', 
-    display_name: 'Bob Developer', 
+  {
+    email: 'bob@example.com',
+    username: 'bob',
+    display_name: 'Bob Developer',
     bio: 'Full-stack developer shipping products every week.',
     tagline: 'Full-stack dev obsessed with developer tools',
     github_username: 'bobthedev',
-    skills: ['TypeScript', 'React', 'Node.js', 'PostgreSQL', 'AWS'],
+    skills: [ 'TypeScript', 'React', 'Node.js', 'PostgreSQL', 'AWS' ],
     looking_for: 'beta_testers',
     website: 'https://bobdev.io',
     launched_products: [
@@ -61,28 +61,28 @@ users_data = [
       { 'name' => 'APIspy', 'url' => 'https://apispy.io', 'description' => 'API monitoring and alerting', 'mrr' => 450, 'revenue_confirmed' => false }
     ]
   },
-  { 
-    email: 'carol@example.com', 
-    username: 'carol', 
-    display_name: 'Carol Designer', 
+  {
+    email: 'carol@example.com',
+    username: 'carol',
+    display_name: 'Carol Designer',
     bio: 'UX/UI designer turned founder. Building in public.',
     tagline: 'Design-first founder building beautiful SaaS',
     github_username: 'caroldesigns',
-    skills: ['Figma', 'UI Design', 'UX Research', 'Framer', 'CSS'],
+    skills: [ 'Figma', 'UI Design', 'UX Research', 'Framer', 'CSS' ],
     looking_for: 'feedback',
     website: 'https://caroldesigns.co',
     launched_products: [
       { 'name' => 'DesignSystem.io', 'url' => 'https://designsystem.io', 'description' => 'Pre-built design systems for startups', 'mrr' => 3200, 'revenue_confirmed' => true }
     ]
   },
-  { 
-    email: 'dave@example.com', 
-    username: 'dave', 
-    display_name: 'Dave Founder', 
+  {
+    email: 'dave@example.com',
+    username: 'dave',
+    display_name: 'Dave Founder',
     bio: 'Serial entrepreneur. Failed 3 times, working on #4.',
     tagline: 'Building startup #4. This time it will work.',
     github_username: 'davefounder',
-    skills: ['Python', 'Django', 'Machine Learning', 'Data Science'],
+    skills: [ 'Python', 'Django', 'Machine Learning', 'Data Science' ],
     looking_for: 'investors',
     website: 'https://davebuilds.com',
     launched_products: [
@@ -91,42 +91,42 @@ users_data = [
       { 'name' => 'ChurnStop', 'url' => 'https://churnstop.io', 'description' => 'Predict and prevent customer churn', 'mrr' => 750, 'revenue_confirmed' => false }
     ]
   },
-  { 
-    email: 'emma@example.com', 
-    username: 'emma', 
-    display_name: 'Emma Tech', 
+  {
+    email: 'emma@example.com',
+    username: 'emma',
+    display_name: 'Emma Tech',
     bio: 'SaaS builder. Love automation and productivity tools.',
     tagline: 'Automating everything that can be automated',
     github_username: 'emmatech',
-    skills: ['Go', 'Rust', 'Kubernetes', 'DevOps', 'Terraform'],
+    skills: [ 'Go', 'Rust', 'Kubernetes', 'DevOps', 'Terraform' ],
     looking_for: 'hiring',
     website: 'https://emmatech.dev',
     launched_products: [
       { 'name' => 'AutoDeploy', 'url' => 'https://autodeploy.sh', 'description' => 'One-click deployments for indie hackers', 'mrr' => 4200, 'revenue_confirmed' => true }
     ]
   },
-  { 
-    email: 'frank@example.com', 
-    username: 'frank', 
-    display_name: 'Frank Maker', 
+  {
+    email: 'frank@example.com',
+    username: 'frank',
+    display_name: 'Frank Maker',
     bio: 'Hardware meets software. Building IoT products.',
     tagline: 'Bridging hardware and software with IoT',
     github_username: 'frankmaker',
-    skills: ['Arduino', 'Raspberry Pi', 'Python', 'C++', 'Electronics'],
+    skills: [ 'Arduino', 'Raspberry Pi', 'Python', 'C++', 'Electronics' ],
     looking_for: 'cofounders',
     website: 'https://frankmaker.io',
     launched_products: [
       { 'name' => 'SensorHub', 'url' => 'https://sensorhub.io', 'description' => 'IoT sensor management platform', 'mrr' => 1500, 'revenue_confirmed' => true }
     ]
   },
-  { 
-    email: 'grace@example.com', 
-    username: 'grace', 
-    display_name: 'Grace Growth', 
+  {
+    email: 'grace@example.com',
+    username: 'grace',
+    display_name: 'Grace Growth',
     bio: 'Growth marketer building marketing tools.',
     tagline: 'Marketing automation for bootstrapped founders',
     github_username: nil,
-    skills: ['Marketing', 'SEO', 'Content Strategy', 'Analytics'],
+    skills: [ 'Marketing', 'SEO', 'Content Strategy', 'Analytics' ],
     looking_for: 'beta_testers',
     website: 'https://gracegrowth.co',
     launched_products: [
@@ -134,14 +134,14 @@ users_data = [
       { 'name' => 'SEOPilot', 'url' => 'https://seopilot.co', 'description' => 'Automated SEO recommendations', 'mrr' => 900, 'revenue_confirmed' => false }
     ]
   },
-  { 
-    email: 'henry@example.com', 
-    username: 'henry', 
-    display_name: 'Henry Hacker', 
+  {
+    email: 'henry@example.com',
+    username: 'henry',
+    display_name: 'Henry Hacker',
     bio: 'Security researcher turned founder.',
     tagline: 'Making security accessible for small teams',
     github_username: 'henryhacker',
-    skills: ['Security', 'Penetration Testing', 'Python', 'Go'],
+    skills: [ 'Security', 'Penetration Testing', 'Python', 'Go' ],
     looking_for: 'nothing',
     website: 'https://henryhacker.security',
     launched_products: [
@@ -301,7 +301,7 @@ puts "Created #{Follow.count} follows"
 puts "Created #{Bookmark.count} bookmarks"
 puts ""
 puts "Builder profiles:"
-users_data.each do |u| 
+users_data.each do |u|
   products_count = u[:launched_products]&.size || 0
   puts "  #{u[:username]} (#{u[:email]}) - #{products_count} products, skills: #{u[:skills]&.join(', ')}"
 end
