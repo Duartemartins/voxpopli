@@ -4,6 +4,12 @@ alice:
   username: alice
   display_name: Alice Builder
   bio: Building cool stuff
+  tagline: Building the future of indie products
+  website: https://alice.example.com
+  github_username: alicebuilder
+  skills: '["Rails", "JavaScript", "SaaS"]'
+  looking_for: cofounders
+  launched_products: '[{"name": "ProductX", "url": "https://productx.com", "description": "A cool product", "mrr": 1000, "revenue_confirmed": true}]'
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
   confirmed_at: <%= Time.current %>
   posts_count: 0
@@ -16,6 +22,12 @@ bob:
   username: bob
   display_name: Bob Coder
   bio: Coding enthusiast
+  tagline: Full-stack developer and maker
+  website: https://bob.example.com
+  github_username: bobcoder
+  skills: '["Python", "AI", "Machine Learning"]'
+  looking_for: beta_testers
+  launched_products: '[]'
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
   confirmed_at: <%= Time.current %>
   posts_count: 0

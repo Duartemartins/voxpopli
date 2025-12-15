@@ -1,0 +1,72 @@
+<div class="bg-carbon border border-steel hover:border-acid-lime hover:shadow-[2px_2px_0_0_#CCFF00] transition-all">
+  <%= link_to user_path(builder.username), class: "flex items-center gap-4 p-3 group" do %>
+    <%= user_avatar(builder, classes: "w-10 h-10 flex-shrink-0") %>
+    
+    <div class="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+      <!-- Name and username -->
+      <div class="min-w-[180px]">
+        <h3 class="font-mono font-bold text-white group-hover:text-acid-lime truncate">
+          <%= builder.display_name || builder.username %>
+        </h3>
+        <p class="font-mono text-xs text-acid-lime">@<%= builder.username %></p>
+      </div>
+      
+      <!-- Tagline -->
+      <div class="flex-1 min-w-0 hidden md:block">
+        <% if builder.tagline.present? %>
+          <p class="font-sans text-sm text-ash truncate"><%= builder.tagline %></p>
+        <% end %>
+      </div>
+      
+      <!-- Skills (compact) -->
+      <div class="hidden lg:flex items-center gap-1 flex-shrink-0">
+        <% builder.skills_list.first(2).each do |skill| %>
+          <span class="inline-block bg-obsidian border border-steel px-2 py-0.5 font-mono text-[10px] text-ash uppercase">
+            <%= skill %>
+          </span>
+        <% end %>
+        <% if builder.skills_list.size > 2 %>
+          <span class="font-mono text-[10px] text-ash">+<%= builder.skills_list.size - 2 %></span>
+        <% end %>
+      </div>
+      
+      <!-- Looking For Badge -->
+      <% if builder.looking_for.present? %>
+        <div class="flex-shrink-0 hidden sm:block">
+          <span class="inline-block bg-acid-lime/10 border border-acid-lime/30 px-2 py-0.5 font-mono text-[10px] text-acid-lime uppercase">
+            <%= builder.looking_for_display %>
+          </span>
+        </div>
+      <% end %>
+      
+      <!-- Stats -->
+      <div class="flex items-center gap-3 font-mono text-[10px] text-ash uppercase flex-shrink-0">
+        <span><strong class="text-white"><%= builder.posts_count %></strong> posts</span>
+        <span><strong class="text-white"><%= builder.followers_count %></strong> followers</span>
+        <% if builder.website.present? %>
+          <span class="text-acid-cyan hidden sm:inline">>></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  
+  <!-- Products Row -->
+  <% if builder.launched_products_list.any? %>
+    <div class="px-3 pb-3 pt-0">
+      <div class="flex flex-wrap items-center gap-3 pl-14">
+        <span class="font-mono text-[10px] text-ash uppercase">PRODUCTS:</span>
+        <% builder.launched_products_list.each do |product| %>
+          <% if product["url"].present? %>
+            <a href="<%= product["url"] %>" target="_blank" rel="noopener" class="font-mono text-xs text-acid-cyan hover:text-white" onclick="event.stopPropagation();">
+              <%= product["name"] %><% if product["mrr"].present? && product["mrr"].to_i > 0 %> <span class="text-acid-lime">($<%= number_with_delimiter(product["mrr"]) %>/mo)</span><% end %>
+            </a>
+          <% else %>
+            <span class="font-mono text-xs text-acid-cyan">
+              <%= product["name"] %><% if product["mrr"].present? && product["mrr"].to_i > 0 %> <span class="text-acid-lime">($<%= number_with_delimiter(product["mrr"]) %>/mo)</span><% end %>
+            </span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

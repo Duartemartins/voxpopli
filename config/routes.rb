@@ -4,6 +4,11 @@ Rails.application.routes.draw do
   root "timeline#index"
   get "timeline", to: "timeline#index"
 
+  # Builder Directory
+  get "directory", to: "directory#index", as: :directory
+  get "directory/sitemap", to: "directory#sitemap", as: :directory_sitemap, defaults: { format: :xml }
+  get "directory/:username", to: "directory#show", as: :directory_user
+
   # Invite code entry
   get "join", to: "invites#new", as: :join
   post "join", to: "invites#verify", as: :verify_invite

@@ -11,6 +11,23 @@ class UsersController < ApplicationController
   end
 
   def update
+    # Handle launched_products_attributes separately
+    if params[:user][:launched_products_attributes].present?
+      products = params[:user][:launched_products_attributes].values.map do |p|
+        # Skip if marked for destruction or empty
+        next if p[:_destroy] == "1" || p[:_destroy] == true
+        next if p[:name].blank? && p[:url].blank?
+        {
+          "name" => p[:name],
+          "url" => p[:url],
+          "description" => p[:description],
+          "mrr" => p[:mrr].present? ? p[:mrr].to_i : nil,
+          "revenue_confirmed" => p[:revenue_confirmed] == "1"
+        }
+      end.compact
+      @user.launched_products = products
+    end
+
     if @user.update(user_params)
       redirect_to user_path(@user.username), notice: "Profile updated successfully"
     else
@@ -31,6 +48,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:display_name, :bio, :website, :avatar)
+    params.require(:user).permit(:display_name, :bio, :website, :avatar, :tagline, :github_username, :skills_list, :looking_for)
   end
 end

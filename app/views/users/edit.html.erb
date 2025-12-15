@@ -26,6 +26,15 @@
     </div>
 
     <div>
+      <%= form.label :tagline, "TAGLINE // ONE_LINER", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <%= form.text_field :tagline, 
+          maxlength: 140,
+          class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel",
+          placeholder: "Building X to solve Y..." %>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">Short description for the builder directory. Max 140 chars.</p>
+    </div>
+
+    <div>
       <%= form.label :bio, "BIO_DATA // DESCRIPTION", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
       <%= form.text_area :bio, 
           rows: 4,
@@ -39,7 +48,153 @@
       <%= form.url_field :website, 
           class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel",
           placeholder: "https://..." %>
-      <p class="mt-1 font-mono text-[10px] text-ash uppercase">External network coordinate.</p>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">External network coordinate. Dofollow backlink included!</p>
+    </div>
+
+    <div>
+      <%= form.label :github_username, "GITHUB_HANDLE", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <div class="flex">
+        <span class="inline-flex items-center bg-obsidian border border-r-0 border-steel px-3 font-mono text-ash">@</span>
+        <%= form.text_field :github_username, 
+            class: "flex-1 bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel",
+            placeholder: "username" %>
+      </div>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">Your GitHub username for profile linking.</p>
+    </div>
+
+    <div>
+      <%= form.label :skills_list, "SKILLS // TAGS", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <%= form.text_field :skills_list, 
+          value: @user.skills_list.join(", "),
+          class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel",
+          placeholder: "Rails, JavaScript, AI, SaaS..." %>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">Comma-separated list of skills/technologies.</p>
+    </div>
+
+    <div>
+      <%= form.label :looking_for, "LOOKING_FOR // STATUS", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <%= form.select :looking_for, 
+          [["Not specified", ""]] + User::LOOKING_FOR_OPTIONS.map { |o| [o.titleize.gsub("_", " "), o] },
+          {},
+          class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all" %>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">What are you currently looking for?</p>
+    </div>
+
+    <!-- Launched Products Section -->
+    <div class="border-t border-steel pt-8" data-controller="products">
+      <div class="flex items-center justify-between mb-4">
+        <label class="font-mono text-xs text-acid-lime uppercase tracking-widest">LAUNCHED_PRODUCTS // PORTFOLIO</label>
+        <button type="button" data-action="products#add" class="font-mono text-xs text-acid-cyan hover:text-white uppercase tracking-widest">
+          [ + ADD_PRODUCT ]
+        </button>
+      </div>
+      <p class="mb-4 font-mono text-[10px] text-ash uppercase">Showcase your launched products. Each gets a dofollow backlink!</p>
+      
+      <div data-products-target="container" class="space-y-4">
+        <% @user.launched_products_list.each_with_index do |product, index| %>
+          <div class="product-entry border border-steel p-4 bg-obsidian/50">
+            <div class="flex items-start justify-between mb-3">
+              <span class="font-mono text-xs text-acid-lime uppercase">PRODUCT_<%= index + 1 %></span>
+              <button type="button" data-action="products#remove" class="font-mono text-xs text-acid-pink hover:text-white uppercase tracking-widest">
+                [ REMOVE ]
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-mono text-[10px] text-ash uppercase tracking-widest mb-1">NAME</label>
+                <%= text_field_tag "user[launched_products_attributes][#{index}][name]", product["name"],
+                    class: "w-full bg-obsidian border border-steel text-white font-mono p-2 text-sm focus:border-acid-lime focus:outline-none",
+                    placeholder: "Product name..." %>
+              </div>
+              
+              <div>
+                <label class="block font-mono text-[10px] text-ash uppercase tracking-widest mb-1">URL</label>
+                <%= url_field_tag "user[launched_products_attributes][#{index}][url]", product["url"],
+                    class: "w-full bg-obsidian border border-steel text-white font-mono p-2 text-sm focus:border-acid-lime focus:outline-none",
+                    placeholder: "https://..." %>
+              </div>
+              
+              <div class="md:col-span-2">
+                <label class="block font-mono text-[10px] text-ash uppercase tracking-widest mb-1">DESCRIPTION</label>
+                <%= text_field_tag "user[launched_products_attributes][#{index}][description]", product["description"],
+                    class: "w-full bg-obsidian border border-steel text-white font-mono p-2 text-sm focus:border-acid-lime focus:outline-none",
+                    placeholder: "Brief description..." %>
+              </div>
+              
+              <div>
+                <label class="block font-mono text-[10px] text-ash uppercase tracking-widest mb-1">MRR (OPTIONAL)</label>
+                <%= number_field_tag "user[launched_products_attributes][#{index}][mrr]", product["mrr"],
+                    class: "w-full bg-obsidian border border-steel text-white font-mono p-2 text-sm focus:border-acid-lime focus:outline-none",
+                    placeholder: "Monthly revenue in $",
+                    min: 0 %>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <%= check_box_tag "user[launched_products_attributes][#{index}][revenue_confirmed]", "1", product["revenue_confirmed"],
+                    class: "w-4 h-4 bg-obsidian border border-steel text-acid-lime focus:ring-acid-lime" %>
+                <label class="font-mono text-[10px] text-ash uppercase tracking-widest">REVENUE_CONFIRMED</label>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <% if @user.launched_products_list.empty? %>
+        <div data-products-target="empty" class="text-center py-8 border border-dashed border-steel">
+          <p class="font-mono text-xs text-ash">>> NO_PRODUCTS_ADDED</p>
+          <p class="font-sans text-xs text-ash mt-1">Click "ADD_PRODUCT" to showcase your work.</p>
+        </div>
+      <% end %>
+      
+      <!-- Template for new products -->
+      <template data-products-target="template">
+        <div class="product-entry border border-steel p-4 bg-obsidian/50">
+          <div class="flex items-start justify-between mb-3">
+            <span class="font-mono text-xs text-acid-lime uppercase">NEW_PRODUCT</span>
+            <button type="button" data-action="products#remove" class="font-mono text-xs text-acid-pink hover:text-white uppercase tracking-widest">
+              [ REMOVE ]
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-mono text-[10px] text-ash uppercase tracking-widest mb-1">NAME</label>
+              <input type="text" name="user[launched_products_attributes][NEW_INDEX][name]"
+                  class="w-full bg-obsidian border border-steel text-white font-mono p-2 text-sm focus:border-acid-lime focus:outline-none"
+                  placeholder="Product name...">
+            </div>
+            
+            <div>
+              <label class="block font-mono text-[10px] text-ash uppercase tracking-widest mb-1">URL</label>
+              <input type="url" name="user[launched_products_attributes][NEW_INDEX][url]"
+                  class="w-full bg-obsidian border border-steel text-white font-mono p-2 text-sm focus:border-acid-lime focus:outline-none"
+                  placeholder="https://...">
+            </div>
+            
+            <div class="md:col-span-2">
+              <label class="block font-mono text-[10px] text-ash uppercase tracking-widest mb-1">DESCRIPTION</label>
+              <input type="text" name="user[launched_products_attributes][NEW_INDEX][description]"
+                  class="w-full bg-obsidian border border-steel text-white font-mono p-2 text-sm focus:border-acid-lime focus:outline-none"
+                  placeholder="Brief description...">
+            </div>
+            
+            <div>
+              <label class="block font-mono text-[10px] text-ash uppercase tracking-widest mb-1">MRR (OPTIONAL)</label>
+              <input type="number" name="user[launched_products_attributes][NEW_INDEX][mrr]"
+                  class="w-full bg-obsidian border border-steel text-white font-mono p-2 text-sm focus:border-acid-lime focus:outline-none"
+                  placeholder="Monthly revenue in $"
+                  min="0">
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <input type="checkbox" name="user[launched_products_attributes][NEW_INDEX][revenue_confirmed]" value="1"
+                  class="w-4 h-4 bg-obsidian border border-steel text-acid-lime focus:ring-acid-lime">
+              <label class="font-mono text-[10px] text-ash uppercase tracking-widest">REVENUE_CONFIRMED</label>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
 
     <div>
@@ -50,7 +205,6 @@
             class: "block w-full text-sm text-ash file:mr-4 file:py-2 file:px-4 file:border file:border-steel file:bg-obsidian file:text-acid-lime file:font-mono file:text-xs file:uppercase file:tracking-widest hover:file:bg-steel/20 file:cursor-pointer cursor-pointer" %>
       </div>
       <p class="mt-1 font-mono text-[10px] text-ash uppercase">Upload profile image. Max 5MB.</p>
-    </div>
     </div>
 
     <div class="pt-4 border-t border-steel flex items-center justify-end gap-4">

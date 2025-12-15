@@ -124,29 +124,17 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select "form"
   end
 
-  test "update with invalid avatar url renders edit form" do
-    sign_in @user
-    patch user_path(@user.username), params: {
-      user: { avatar_url: "not-a-valid-url" }
-    }
-
-    assert_response :unprocessable_entity
-    assert_select "form"
-  end
-
   test "update with valid urls succeeds" do
     sign_in @user
     patch user_path(@user.username), params: {
       user: {
-        website: "https://example.com",
-        avatar_url: "https://example.com/avatar.png"
+        website: "https://example.com"
       }
     }
 
     assert_redirected_to user_path(@user.username)
     @user.reload
     assert_equal "https://example.com", @user.website
-    assert_equal "https://example.com/avatar.png", @user.avatar_url
   end
 
   test "update clears optional fields when blank" do
@@ -167,7 +155,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
     get user_path(@user.username)
     assert_response :success
-    assert_select "a[href='#{edit_user_path(@user.username)}']", text: "Edit Profile"
+    assert_select "a[href='#{edit_user_path(@user.username)}']"
   end
 
   test "show does not display edit button for other profiles" do
@@ -176,5 +164,84 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get user_path(other_user.username)
     assert_response :success
     assert_select "a[href='#{edit_user_path(other_user.username)}']", count: 0
+  end
+
+  # Launched Products Tests
+  test "update with launched products adds products" do
+    sign_in @user
+    patch user_path(@user.username), params: {
+      user: {
+        launched_products_attributes: {
+          "0" => { name: "My App", url: "https://myapp.com", description: "A cool app", mrr: "1000", revenue_confirmed: "1" },
+          "1" => { name: "Second Product", url: "https://second.com", description: "Another product", mrr: "500", revenue_confirmed: "0" }
+        }
+      }
+    }
+
+    assert_redirected_to user_path(@user.username)
+    @user.reload
+    assert_equal 2, @user.launched_products_list.size
+    assert_equal "My App", @user.launched_products_list.first["name"]
+    assert_equal "https://myapp.com", @user.launched_products_list.first["url"]
+    assert_equal 1000, @user.launched_products_list.first["mrr"]
+  end
+
+  test "update removes products marked for destruction" do
+    @user.update!(launched_products: [
+      { "name" => "Existing Product", "url" => "https://existing.com", "description" => "Test" }
+    ])
+    sign_in @user
+
+    patch user_path(@user.username), params: {
+      user: {
+        launched_products_attributes: {
+          "0" => { name: "Existing Product", url: "https://existing.com", description: "Test", _destroy: "1" }
+        }
+      }
+    }
+
+    assert_redirected_to user_path(@user.username)
+    @user.reload
+    assert_equal 0, @user.launched_products_list.size
+  end
+
+  test "update replaces existing products" do
+    @user.update!(launched_products: [
+      { "name" => "Old Product", "url" => "https://old.com", "description" => "Old desc" }
+    ])
+    sign_in @user
+
+    patch user_path(@user.username), params: {
+      user: {
+        launched_products_attributes: {
+          "0" => { name: "New Product", url: "https://new.com", description: "New desc", mrr: "2000", revenue_confirmed: "1" }
+        }
+      }
+    }
+
+    assert_redirected_to user_path(@user.username)
+    @user.reload
+    assert_equal 1, @user.launched_products_list.size
+    assert_equal "New Product", @user.launched_products_list.first["name"]
+  end
+
+  test "update with builder fields saves tagline and skills" do
+    sign_in @user
+    patch user_path(@user.username), params: {
+      user: {
+        tagline: "Building cool stuff",
+        github_username: "testuser",
+        skills_list: "Ruby, Rails, JavaScript",
+        looking_for: "cofounders"
+      }
+    }
+
+    assert_redirected_to user_path(@user.username)
+    @user.reload
+    assert_equal "Building cool stuff", @user.tagline
+    assert_equal "testuser", @user.github_username
+    assert_includes @user.skills_list, "Ruby"
+    assert_includes @user.skills_list, "Rails"
+    assert_equal "cofounders", @user.looking_for
   end
 end

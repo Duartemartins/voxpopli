@@ -182,27 +182,181 @@ class UserTest < ActiveSupport::TestCase
     assert user.valid?
   end
 
-  test "avatar_url must be a valid url" do
+  # Builder Profile Tests
+  test "tagline cannot exceed 140 characters" do
     user = users(:alice)
 
-    user.avatar_url = "not-a-url"
+    user.tagline = "a" * 140
+    assert user.valid?
+
+    user.tagline = "a" * 141
     assert_not user.valid?
-    assert_includes user.errors[:avatar_url], "must be a valid URL"
+    assert_includes user.errors[:tagline], "is too long (maximum is 140 characters)"
+  end
 
-    user.avatar_url = "ftp://invalid.com/avatar.png"
+  test "github_username validates format" do
+    user = users(:alice)
+
+    user.github_username = "valid-user123"
+    assert user.valid?
+
+    user.github_username = "invalid user"
     assert_not user.valid?
 
-    user.avatar_url = "http://valid.com/avatar.png"
+    user.github_username = "@validuser"
+    # should strip @ prefix
+    assert user.valid?
+    assert_equal "validuser", user.github_username
+  end
+
+  test "github_username must be unique" do
+    user = users(:charlie)
+    user.github_username = users(:alice).github_username
+
+    assert_not user.valid?
+    assert_includes user.errors[:github_username], "has already been taken"
+  end
+
+  test "looking_for must be a valid option" do
+    user = users(:alice)
+
+    user.looking_for = "cofounders"
     assert user.valid?
 
-    user.avatar_url = "https://valid.com/avatar.png"
+    user.looking_for = "invalid_option"
+    assert_not user.valid?
+
+    user.looking_for = ""
     assert user.valid?
 
-    user.avatar_url = ""
+    user.looking_for = nil
     assert user.valid?
+  end
 
-    user.avatar_url = nil
-    assert user.valid?
+  test "skills_list returns array" do
+    user = users(:alice)
+    assert_kind_of Array, user.skills_list
+    assert_includes user.skills_list, "Rails"
+  end
+
+  test "skills_list= accepts comma-separated string" do
+    user = users(:charlie)
+    user.skills_list = "Ruby, Python, JavaScript"
+    assert_equal [ "Ruby", "Python", "JavaScript" ], user.skills_list
+  end
+
+  test "skills_list= accepts array" do
+    user = users(:charlie)
+    user.skills_list = [ "Go", "Rust" ]
+    assert_equal [ "Go", "Rust" ], user.skills_list
+  end
+
+  test "launched_products_list returns array" do
+    user = users(:alice)
+    assert_kind_of Array, user.launched_products_list
+    assert_equal 1, user.launched_products_list.size
+    assert_equal "ProductX", user.launched_products_list.first["name"]
+  end
+
+  test "add_launched_product adds product to list" do
+    user = users(:charlie)
+    user.add_launched_product(
+      name: "NewProduct",
+      url: "https://newproduct.com",
+      description: "A new product",
+      mrr: 500,
+      revenue_confirmed: false
+    )
+
+    assert_equal 1, user.launched_products_list.size
+    product = user.launched_products_list.first
+    assert_equal "NewProduct", product[:name]
+    assert_equal "https://newproduct.com", product[:url]
+    assert_equal 500, product[:mrr]
+  end
+
+  test "has_complete_builder_profile? returns true when tagline and website present" do
+    user = users(:alice)
+    assert user.has_complete_builder_profile?
+  end
+
+  test "has_complete_builder_profile? returns false when missing tagline" do
+    user = users(:charlie)
+    assert_not user.has_complete_builder_profile?
+  end
+
+  test "github_url returns full GitHub URL" do
+    user = users(:alice)
+    assert_equal "https://github.com/alicebuilder", user.github_url
+  end
+
+  test "github_url returns nil when no username" do
+    user = users(:charlie)
+    assert_nil user.github_url
+  end
+
+  test "looking_for_display returns human readable string" do
+    user = users(:alice)
+    assert_equal "Cofounders", user.looking_for_display
+  end
+
+  test "looking_for_display returns nil when blank" do
+    user = users(:charlie)
+    assert_nil user.looking_for_display
+  end
+
+  test "to_json_ld returns valid JSON-LD structure" do
+    user = users(:alice)
+    json_ld = user.to_json_ld
+
+    assert_equal "https://schema.org", json_ld["@context"]
+    assert_equal "Person", json_ld["@type"]
+    assert_equal user.display_name, json_ld["name"]
+    assert_equal user.username, json_ld["alternateName"]
+    assert_includes json_ld["sameAs"], user.website
+    assert_includes json_ld["sameAs"], user.github_url
+  end
+
+  test "with_skill scope filters by skill" do
+    users = User.with_skill("Rails")
+    assert_includes users, users(:alice)
+    assert_not_includes users, users(:bob)
+  end
+
+  test "looking_for_type scope filters by looking_for" do
+    users = User.looking_for_type("cofounders")
+    assert_includes users, users(:alice)
+    assert_not_includes users, users(:bob)
+  end
+
+  test "with_complete_profile scope returns users with tagline and website" do
+    users = User.with_complete_profile
+    assert_includes users, users(:alice)
+    assert_not_includes users, users(:charlie)
+  end
+
+  test "recently_active scope orders by updated_at desc" do
+    users = User.recently_active.to_a
+    assert users.first.updated_at >= users.last.updated_at
+  end
+
+  test "newest scope orders by created_at desc" do
+    users = User.newest.to_a
+    assert users.first.created_at >= users.last.created_at
+  end
+
+  test "directory and builders are reserved usernames" do
+    user = User.new(
+      email: "test@example.com",
+      username: "directory",
+      password: "password123"
+    )
+    assert_not user.valid?
+    assert_includes user.errors[:username], "is reserved"
+
+    user.username = "builders"
+    assert_not user.valid?
+    assert_includes user.errors[:username], "is reserved"
   end
 
   test "ensure_invite_codes! creates 5 invite codes for new user" do

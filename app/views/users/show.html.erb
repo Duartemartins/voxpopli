@@ -1,68 +1,177 @@
+<% content_for :title, "#{@user.display_name || @user.username} | Voxpopli" %>
+
+<% content_for :head do %>
+  <meta name="description" content="<%= @user.tagline || @user.bio || "#{@user.display_name || @user.username} on Voxpopli" %>">
+  <link rel="canonical" href="<%= user_url(@user.username) %>">
+  
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+    <%= raw @user.to_json_ld.to_json %>
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= @user.display_name || @user.username %> | Voxpopli">
+  <meta property="og:description" content="<%= @user.tagline || @user.bio %>">
+  <meta property="og:type" content="profile">
+  <meta property="og:url" content="<%= user_url(@user.username) %>">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="<%= @user.display_name || @user.username %>">
+  <meta name="twitter:description" content="<%= @user.tagline || @user.bio %>">
+<% end %>
+
 <div class="space-y-8">
   <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
-    <div class="flex items-start justify-between">
-      <div class="flex items-start gap-6">
-        <%= user_avatar(@user, classes: "w-24 h-24") %>
-        <div>
-          <h1 class="text-2xl font-mono font-bold text-white tracking-tighter">
-            <%= @user.display_name || @user.username %>
-          </h1>
-          <p class="font-mono text-sm text-acid-lime">@<%= @user.username %></p>
-        <% if @user.bio.present? %>
-          <p class="mt-4 font-sans text-white leading-relaxed max-w-lg"><%= @user.bio %></p>
-        <% end %>
-        <% if @user.website.present? %>
-          <p class="mt-2 font-mono text-xs">
-            <span class="text-steel">LINK //</span>
-            <%= link_to @user.website.gsub(/^https?:\/\//, '').chomp('/'), @user.website, 
-                target: '_blank', rel: 'noopener', class: 'text-acid-cyan hover:text-white hover:underline' %>
-          </p>
-        <% end %>
-        </div>
-      </div>
+    <div class="flex flex-col md:flex-row md:items-start gap-6">
+      <%= user_avatar(@user, classes: "w-24 h-24 flex-shrink-0") %>
       
-      <% if user_signed_in? %>
-        <% if current_user == @user %>
-          <%= link_to edit_user_path(@user.username),
-              class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 border border-steel text-ash hover:bg-acid-lime hover:text-obsidian hover:border-acid-lime transition-all' do %>
-            [ EDIT_PROFILE ]
-          <% end %>
-        <% else %>
-          <div id="follow_<%= @user.id %>">
-            <% if current_user.following?(@user) %>
-              <%= button_to user_follow_path(@user), method: :delete,
-                  class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 border border-acid-pink text-acid-pink hover:bg-acid-pink hover:text-obsidian transition-all bg-transparent cursor-pointer' do %>
-                [ UNFOLLOW ]
+      <div class="flex-1">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-mono font-bold text-white tracking-tighter">
+              <%= @user.display_name || @user.username %>
+            </h1>
+            <p class="font-mono text-sm text-acid-lime">@<%= @user.username %></p>
+          </div>
+          
+          <% if user_signed_in? %>
+            <% if current_user == @user %>
+              <%= link_to edit_user_path(@user.username),
+                  class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 border border-steel text-ash hover:bg-acid-lime hover:text-obsidian hover:border-acid-lime transition-all' do %>
+                [ EDIT_PROFILE ]
               <% end %>
             <% else %>
-              <%= button_to user_follow_path(@user), method: :post,
-                  class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 bg-acid-lime text-obsidian hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all border-none cursor-pointer' do %>
-                [ FOLLOW_USER ]
-              <% end %>
+              <div id="follow_<%= @user.id %>">
+                <% if current_user.following?(@user) %>
+                  <%= button_to user_follow_path(@user), method: :delete,
+                      class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 border border-acid-pink text-acid-pink hover:bg-acid-pink hover:text-obsidian transition-all bg-transparent cursor-pointer' do %>
+                    [ UNFOLLOW ]
+                  <% end %>
+                <% else %>
+                  <%= button_to user_follow_path(@user), method: :post,
+                      class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 bg-acid-lime text-obsidian hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all border-none cursor-pointer' do %>
+                    [ FOLLOW_USER ]
+                  <% end %>
+                <% end %>
+              </div>
             <% end %>
+          <% end %>
+        </div>
+        
+        <% if @user.tagline.present? %>
+          <p class="mt-4 font-sans text-lg text-white"><%= @user.tagline %></p>
+        <% end %>
+        
+        <% if @user.bio.present? %>
+          <p class="mt-2 font-sans text-ash leading-relaxed"><%= @user.bio %></p>
+        <% end %>
+        
+        <!-- Links -->
+        <div class="mt-4 flex flex-wrap gap-4">
+          <% if @user.website.present? %>
+            <a href="<%= @user.website %>" target="_blank" rel="noopener" 
+               class="font-mono text-xs text-acid-cyan hover:text-white flex items-center gap-1">
+              <span class="text-steel">>></span>
+              <%= @user.website.gsub(/^https?:\/\//, '').chomp('/') %>
+            </a>
+          <% end %>
+          
+          <% if @user.github_username.present? %>
+            <a href="<%= @user.github_url %>" target="_blank" rel="noopener"
+               class="font-mono text-xs text-acid-cyan hover:text-white flex items-center gap-1">
+              <span class="text-steel">GitHub:</span>
+              @<%= @user.github_username %>
+            </a>
+          <% end %>
+        </div>
+        
+        <!-- Looking For -->
+        <% if @user.looking_for.present? %>
+          <div class="mt-4">
+            <span class="inline-block bg-acid-lime/10 border border-acid-lime/30 px-3 py-1 font-mono text-xs text-acid-lime uppercase">
+              SEEKING: <%= @user.looking_for_display %>
+            </span>
           </div>
         <% end %>
-      <% end %>
+      </div>
     </div>
     
-    <div class="mt-6 flex gap-8 font-mono text-xs uppercase tracking-widest border-t border-steel pt-4">
+    <!-- Stats -->
+    <div class="mt-6 flex flex-wrap gap-6 font-mono text-xs uppercase tracking-widest border-t border-steel pt-4">
       <span class="text-ash"><strong class="text-white"><%= @user.posts_count %></strong> TRANSMISSIONS</span>
       <span class="text-ash"><strong class="text-white"><%= @user.followers_count %></strong> SUBSCRIBERS</span>
       <span class="text-ash"><strong class="text-white"><%= @user.following_count %></strong> TARGETS</span>
     </div>
   </div>
 
-  <div class="space-y-6">
-    <% if @posts.any? %>
-      <%= render @posts %>
-    <% else %>
-      <div class="text-center py-16 border border-dashed border-steel bg-carbon/50">
-        <p class="font-mono text-sm text-ash">>> NO_TRANSMISSIONS_FOUND</p>
+  <!-- Skills -->
+  <% if @user.skills_list.any? %>
+    <div class="bg-carbon border border-steel p-4">
+      <h2 class="font-mono text-xs text-ash uppercase tracking-widest mb-3">SKILLS</h2>
+      <div class="flex flex-wrap gap-2">
+        <% @user.skills_list.each do |skill| %>
+          <%= link_to directory_path(skill: skill), 
+              class: "inline-block bg-obsidian border border-steel px-3 py-1 font-mono text-xs text-white hover:border-acid-lime hover:text-acid-lime transition-colors" do %>
+            <%= skill %>
+          <% end %>
+        <% end %>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
-  <div class="mt-6">
-    <%= paginate @posts %>
+  <!-- Launched Products -->
+  <% if @user.launched_products_list.any? %>
+    <div class="bg-carbon border border-steel p-4">
+      <h2 class="font-mono text-xs text-ash uppercase tracking-widest mb-4">LAUNCHED_PRODUCTS</h2>
+      <div class="space-y-4">
+        <% @user.launched_products_list.each do |product| %>
+          <div class="border border-steel p-4 hover:border-acid-cyan transition-colors">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="font-mono font-bold text-white">
+                  <% if product["url"].present? %>
+                    <a href="<%= product["url"] %>" target="_blank" rel="noopener" class="hover:text-acid-cyan">
+                      <%= product["name"] %> >>
+                    </a>
+                  <% else %>
+                    <%= product["name"] %>
+                  <% end %>
+                </h3>
+                <% if product["description"].present? %>
+                  <p class="mt-1 font-sans text-sm text-ash"><%= product["description"] %></p>
+                <% end %>
+              </div>
+              <% if product["mrr"].present? %>
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-sm text-acid-lime">$<%= number_with_delimiter(product["mrr"]) %>/mo</span>
+                  <% if product["revenue_confirmed"] %>
+                    <span class="font-mono text-xs text-acid-lime border border-acid-lime px-1" title="Revenue confirmed">[VERIFIED]</span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Posts -->
+  <div>
+    <h2 class="font-mono text-xs text-ash uppercase tracking-widest mb-4">TRANSMISSIONS</h2>
+    <div class="space-y-6">
+      <% if @posts.any? %>
+        <%= render @posts %>
+      <% else %>
+        <div class="text-center py-16 border border-dashed border-steel bg-carbon/50">
+          <p class="font-mono text-sm text-ash">>> NO_TRANSMISSIONS_FOUND</p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-6">
+      <%= paginate @posts %>
+    </div>
   </div>
 </div>

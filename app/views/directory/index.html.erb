@@ -1,0 +1,119 @@
+<% content_for :title, "Builder Directory | Voxpopli" %>
+
+<% content_for :head do %>
+  <meta name="description" content="Discover indie builders, makers, and founders. Connect with builders who are creating products and sharing their journey.">
+  <link rel="canonical" href="<%= directory_url %>">
+<% end %>
+
+<% view_mode = params[:view] == "list" ? "list" : "grid" %>
+
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="border-b border-steel pb-8">
+    <h1 class="font-mono text-3xl font-bold tracking-tighter text-white">
+      BUILDER_<span class="text-acid-lime">DIRECTORY</span>
+    </h1>
+    <p class="mt-2 font-sans text-ash max-w-2xl">
+      Discover indie builders, makers, and founders. Connect with people who are building in public.
+    </p>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-carbon border border-steel p-4">
+    <%= form_with url: directory_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |f| %>
+      <!-- Search -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block font-mono text-xs text-ash uppercase tracking-widest mb-2">SEARCH</label>
+        <%= text_field_tag :q, params[:q], 
+            placeholder: "Search builders...",
+            class: "w-full bg-obsidian border border-steel px-4 py-2 font-mono text-sm text-white placeholder-ash focus:border-acid-lime focus:outline-none focus:ring-1 focus:ring-acid-lime" %>
+      </div>
+
+      <!-- Skill Filter -->
+      <div class="min-w-[180px]">
+        <label class="block font-mono text-xs text-ash uppercase tracking-widest mb-2">SKILL</label>
+        <%= select_tag :skill, 
+            options_for_select([["All Skills", ""]] + @all_skills.map { |s| [s, s] }, params[:skill]),
+            class: "w-full bg-obsidian border border-steel px-4 py-2 font-mono text-sm text-white focus:border-acid-lime focus:outline-none focus:ring-1 focus:ring-acid-lime" %>
+      </div>
+
+      <!-- Looking For Filter -->
+      <div class="min-w-[180px]">
+        <label class="block font-mono text-xs text-ash uppercase tracking-widest mb-2">LOOKING_FOR</label>
+        <%= select_tag :looking_for,
+            options_for_select([["Anyone", ""]] + User::LOOKING_FOR_OPTIONS.map { |o| [o.titleize.gsub("_", " "), o] }, params[:looking_for]),
+            class: "w-full bg-obsidian border border-steel px-4 py-2 font-mono text-sm text-white focus:border-acid-lime focus:outline-none focus:ring-1 focus:ring-acid-lime" %>
+      </div>
+
+      <!-- Sort -->
+      <div class="min-w-[150px]">
+        <label class="block font-mono text-xs text-ash uppercase tracking-widest mb-2">SORT</label>
+        <%= select_tag :sort,
+            options_for_select([["Recently Active", "active"], ["Newest", "newest"]], params[:sort]),
+            class: "w-full bg-obsidian border border-steel px-4 py-2 font-mono text-sm text-white focus:border-acid-lime focus:outline-none focus:ring-1 focus:ring-acid-lime" %>
+      </div>
+
+      <!-- Hidden field to preserve view mode -->
+      <%= hidden_field_tag :view, view_mode %>
+
+      <!-- Submit -->
+      <div>
+        <%= submit_tag "[ FILTER ]", 
+            class: "bg-acid-lime text-obsidian font-mono text-xs uppercase tracking-widest px-6 py-2 hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Results count and view toggle -->
+  <div class="flex items-center justify-between">
+    <div class="font-mono text-xs text-ash uppercase tracking-widest">
+      >> <%= @builders.total_count %> BUILDERS_FOUND
+    </div>
+    
+    <!-- View Toggle -->
+    <div class="flex items-center gap-2">
+      <span class="font-mono text-xs text-ash uppercase tracking-widest">VIEW:</span>
+      <%= link_to directory_path(request.query_parameters.merge(view: "grid")), 
+          class: "p-2 border #{view_mode == 'grid' ? 'border-acid-lime bg-acid-lime/10 text-acid-lime' : 'border-steel text-ash hover:border-acid-lime hover:text-acid-lime'} transition-colors",
+          title: "Grid view" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+      <% end %>
+      <%= link_to directory_path(request.query_parameters.merge(view: "list")), 
+          class: "p-2 border #{view_mode == 'list' ? 'border-acid-lime bg-acid-lime/10 text-acid-lime' : 'border-steel text-ash hover:border-acid-lime hover:text-acid-lime'} transition-colors",
+          title: "List view" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Builder Grid/List -->
+  <% if @builders.any? %>
+    <% if view_mode == "grid" %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <% @builders.each do |builder| %>
+          <%= render "builder_card", builder: builder %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="space-y-2">
+        <% @builders.each do |builder| %>
+          <%= render "builder_row", builder: builder %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Pagination -->
+    <div class="mt-8">
+      <%= paginate @builders %>
+    </div>
+  <% else %>
+    <div class="text-center py-16 border border-dashed border-steel bg-carbon/50">
+      <p class="font-mono text-sm text-ash">>> NO_BUILDERS_FOUND</p>
+      <p class="font-sans text-xs text-ash mt-2">Try adjusting your filters or search term.</p>
+    </div>
+  <% end %>
+</div>
