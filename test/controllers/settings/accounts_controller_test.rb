@@ -47,7 +47,7 @@ module Settings
       # Make user eligible
       @user.update_columns(created_at: 10.days.ago)
       @user.ensure_invite_codes!
-      
+
       get settings_account_path
       assert_response :success
       assert_match "INVITE_CODES", response.body
@@ -62,7 +62,7 @@ module Settings
       )
       eligible_user.update_columns(created_at: 10.days.ago)
       eligible_user.ensure_invite_codes!
-      
+
       assert_equal User::INVITE_CODES_LIMIT, eligible_user.invites_sent.count
 
       sign_in eligible_user
@@ -155,7 +155,7 @@ module Settings
       sign_in @user
       @user.update_columns(created_at: 10.days.ago)
       @user.ensure_invite_codes!
-      
+
       get settings_account_path
 
       @user.invite_codes.each do |invite|

@@ -183,7 +183,7 @@ class DirectoryControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index collects products from users" do
-    @alice.update!(launched_products: [{"name" => "TestApp", "url" => "https://test.com", "description" => "A test app", "mrr" => "1000"}])
+    @alice.update!(launched_products: [ { "name" => "TestApp", "url" => "https://test.com", "description" => "A test app", "mrr" => "1000" } ])
     get directory_url
     assert_response :success
   end

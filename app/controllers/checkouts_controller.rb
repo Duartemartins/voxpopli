@@ -8,7 +8,7 @@ class CheckoutsController < ApplicationController
   def new
     if user_signed_in?
       redirect_to root_path, notice: "You are already registered"
-      return
+      nil
     end
   end
 

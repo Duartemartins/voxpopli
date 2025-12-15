@@ -35,7 +35,7 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
 
   test "create with valid data redirects to stripe" do
     mock_session = OpenStruct.new(url: "https://stripe.com/checkout")
-    
+
     Stripe::Checkout::Session.stub :create, mock_session do
       post checkout_path, params: {
         user: {
@@ -81,12 +81,12 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
         password_confirmation: "password123"
       }
     }
-    # We need to mock the create call to get the session populated, 
+    # We need to mock the create call to get the session populated,
     # but since we can't easily do that in one go without the stub above,
-    # let's just manually set the session if possible. 
+    # let's just manually set the session if possible.
     # Integration tests make accessing session hard.
     # So we'll use the stubbed create to populate the session first.
-    
+
     mock_create_session = OpenStruct.new(url: "https://stripe.com/checkout")
     Stripe::Checkout::Session.stub :create, mock_create_session do
       post checkout_path, params: {
@@ -107,10 +107,10 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
 
     Stripe::Checkout::Session.stub :retrieve, mock_retrieve_session do
       get checkout_success_path(session_id: "cs_test_123")
-      
+
       assert_redirected_to root_path
       assert_equal "Welcome to Voxpopli! Your account has been created.", flash[:notice]
-      
+
       user = User.find_by(username: "paiduser")
       assert user
       assert user.paid?
@@ -120,7 +120,7 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
 
   test "success handles expired session (missing registration data)" do
     # Don't populate session[:pending_registration]
-    
+
     mock_retrieve_session = OpenStruct.new(
       payment_status: "paid",
       metadata: OpenStruct.new(email: "missing@example.com")
@@ -128,7 +128,7 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
 
     Stripe::Checkout::Session.stub :retrieve, mock_retrieve_session do
       get checkout_success_path(session_id: "cs_test_123")
-      
+
       assert_redirected_to join_path
       assert_match "Registration session expired", flash[:alert]
     end
@@ -136,7 +136,7 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
 
   test "success handles existing user (page refresh)" do
     user = users(:alice)
-    
+
     mock_retrieve_session = OpenStruct.new(
       payment_status: "paid",
       metadata: OpenStruct.new(email: user.email)
@@ -144,7 +144,7 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
 
     Stripe::Checkout::Session.stub :retrieve, mock_retrieve_session do
       get checkout_success_path(session_id: "cs_test_123")
-      
+
       assert_redirected_to root_path
       assert_equal "Welcome back!", flash[:notice]
     end

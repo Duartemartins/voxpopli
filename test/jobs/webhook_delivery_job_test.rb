@@ -53,23 +53,23 @@ class WebhookDeliveryJobTest < ActiveJob::TestCase
 
   test "performs request and updates webhook status on success" do
     payload = { test: "data" }
-    
+
     # Mock Net::HTTP
     mock_http = Minitest::Mock.new
     mock_response = Minitest::Mock.new
     mock_response.expect :code, "200"
-    
-    mock_http.expect :use_ssl=, true, [true]
-    mock_http.expect :request, mock_response, [Net::HTTP::Post]
-    
+
+    mock_http.expect :use_ssl=, true, [ true ]
+    mock_http.expect :request, mock_response, [ Net::HTTP::Post ]
+
     Net::HTTP.stub :new, mock_http do
       WebhookDeliveryJob.perform_now(@webhook.id, "post.created", payload)
     end
-    
+
     @webhook.reload
     assert_equal 200, @webhook.last_status
     assert_not_nil @webhook.last_triggered_at
-    
+
     mock_http.verify
     mock_response.verify
   end
