@@ -29,7 +29,7 @@
   </head>
 
   <body class="bg-obsidian font-sans text-white antialiased selection:bg-acid-lime selection:text-obsidian scanlines min-h-screen">
-    <nav class="bg-obsidian border-b border-steel sticky top-0 z-50">
+    <nav class="bg-obsidian border-b border-steel fixed top-0 w-full z-50">
       <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-stretch min-h-16">
         <div class="flex items-center justify-between border-b md:border-b-0 border-steel">
           <%= link_to root_path, class: "flex items-center px-6 py-4 md:py-0 border-r border-steel font-mono font-bold text-xl tracking-tighter text-white hover:bg-carbon hover:text-acid-lime transition-colors duration-0 h-full" do %>
@@ -69,7 +69,7 @@
       </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-4 py-12">
+    <main class="max-w-4xl mx-auto px-4 pb-12 pt-36 md:pt-28">
       <% if notice %>
         <div class="mb-8 border border-acid-lime bg-acid-lime/10 p-4 font-mono text-sm text-acid-lime">
           <span class="font-bold">>>> SYSTEM_NOTICE:</span> <%= notice %>
