@@ -90,6 +90,14 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "alice", users(:alice).to_param
   end
 
+  test "can attach avatar" do
+    user = users(:alice)
+    assert_not user.avatar.attached?
+
+    user.avatar.attach(io: File.open(Rails.root.join("test/fixtures/files/test_image.jpg")), filename: "test_image.jpg", content_type: "image/jpeg")
+    assert user.avatar.attached?
+  end
+
   test "follow a user" do
     alice = users(:alice)
     charlie = users(:charlie)

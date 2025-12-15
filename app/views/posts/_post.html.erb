@@ -8,7 +8,7 @@
   <header class="flex items-center justify-between p-3 border-b border-steel bg-obsidian/50">
     <div class="flex items-center gap-3">
       <%= link_to user_path(post.user) do %>
-        <%= avatar_for(post.user, size: :small) %>
+        <%= user_avatar(post.user, classes: "w-8 h-8") %>
       <% end %>
       <%= link_to user_path(post.user), class: 'font-mono text-acid-lime text-sm tracking-tight hover:text-white transition-colors' do %>
         @<%= post.user.username.upcase %>

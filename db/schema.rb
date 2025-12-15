@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_08_192634) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_15_193902) do
   create_table "active_storage_attachments", id: :string, force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -143,7 +143,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_192634) do
     t.string "display_name"
     t.text "bio"
     t.string "website"
-    t.string "avatar_url"
     t.boolean "is_private", default: false
     t.integer "posts_count", default: 0
     t.integer "followers_count", default: 0

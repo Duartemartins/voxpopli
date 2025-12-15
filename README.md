@@ -6,7 +6,7 @@
 
 A privacy-first, open source microblogging platform. 
 
-![Voxpopli Screenshot](docs/screenshot.png)
+![Voxpopli Screenshot](public/screenshot.png)
 
 ## Features
 

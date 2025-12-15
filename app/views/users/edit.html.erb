@@ -43,11 +43,14 @@
     </div>
 
     <div>
-      <%= form.label :avatar_url, "IMG_SOURCE // AVATAR_URL", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
-      <%= form.url_field :avatar_url, 
-          class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel",
-          placeholder: "https://..." %>
-      <p class="mt-1 font-mono text-[10px] text-ash uppercase">Profile image resource locator.</p>
+      <%= form.label :avatar, "IMG_SOURCE // AVATAR_UPLOAD", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <div class="flex items-center gap-4">
+        <%= user_avatar(@user, classes: "w-16 h-16") %>
+        <%= form.file_field :avatar, 
+            class: "block w-full text-sm text-ash file:mr-4 file:py-2 file:px-4 file:border file:border-steel file:bg-obsidian file:text-acid-lime file:font-mono file:text-xs file:uppercase file:tracking-widest hover:file:bg-steel/20 file:cursor-pointer cursor-pointer" %>
+      </div>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">Upload profile image. Max 5MB.</p>
+    </div>
     </div>
 
     <div class="pt-4 border-t border-steel flex items-center justify-end gap-4">

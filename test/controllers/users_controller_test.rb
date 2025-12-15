@@ -79,6 +79,25 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "https://newwebsite.com", @user.website
   end
 
+  test "update own profile with avatar" do
+    sign_in @user
+    file = fixture_file_upload("test_image.jpg", "image/jpeg")
+
+    patch user_path(@user.username), params: {
+      user: {
+        display_name: "Alice Updated",
+        avatar: file
+      }
+    }
+
+    assert_redirected_to user_path(@user.username)
+    assert_equal "Profile updated successfully", flash[:notice]
+
+    @user.reload
+    assert_equal "Alice Updated", @user.display_name
+    assert @user.avatar.attached?
+  end
+
   test "cannot update other users profile" do
     sign_in @user
     other_user = users(:bob)

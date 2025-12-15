@@ -2,7 +2,7 @@
   <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
     <div class="flex items-start justify-between">
       <div class="flex items-start gap-6">
-        <%= avatar_for(@user, size: :large) %>
+        <%= user_avatar(@user, classes: "w-24 h-24") %>
         <div>
           <h1 class="text-2xl font-mono font-bold text-white tracking-tighter">
             <%= @user.display_name || @user.username %>

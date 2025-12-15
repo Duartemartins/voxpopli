@@ -45,7 +45,10 @@
         <div class="flex-1 flex flex-wrap items-center justify-center md:justify-end px-6 gap-4 md:gap-8 py-4 md:py-0">
           <% if user_signed_in? %>
             <%= link_to "[ FEED ]", root_path, class: "font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest transition-colors duration-0" %>
-            <%= link_to "[ PROFILE ]", user_path(current_user), class: "font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest transition-colors duration-0" %>
+            <%= link_to user_path(current_user), class: "flex items-center gap-2 font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest transition-colors duration-0" do %>
+              <span>[ PROFILE ]</span>
+              <%= user_avatar(current_user, classes: "w-5 h-5") %>
+            <% end %>
             <%= link_to "[ SETTINGS ]", settings_account_path, class: "font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest transition-colors duration-0" %>
             <%= button_to "[ LOGOUT ]", destroy_user_session_path, method: :delete, class: "font-mono text-xs text-ash hover:text-acid-pink uppercase tracking-widest transition-colors duration-0 bg-transparent border-none cursor-pointer" %>
           <% else %>
