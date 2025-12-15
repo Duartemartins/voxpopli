@@ -38,7 +38,7 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
       client_secret: "cs_test_secret_123",
       url: "https://stripe.com/checkout" # Still needed for some internal logic if any, but mainly client_secret
     )
-    
+
     Stripe::Checkout::Session.stub :create, mock_session do
       post checkout_path, params: {
         user: {

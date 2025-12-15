@@ -3,13 +3,34 @@
     <%= render 'posts/form' %>
   <% end %>
 
+  <div class="flex gap-4 mb-2 overflow-x-auto">
+    <% if user_signed_in? %>
+      <%= link_to timeline_path(feed: 'following', view: params[:view]), 
+          class: "font-mono text-xs px-2 py-1 border transition-all whitespace-nowrap #{@feed_type == 'following' ? 'border-acid-lime text-acid-lime bg-acid-lime/10' : 'border-steel text-ash hover:border-white hover:text-white'}" do %>
+        // NETWORK
+      <% end %>
+    <% end %>
+    
+    <%= link_to timeline_path(feed: 'global', view: params[:view]), 
+        class: "font-mono text-xs px-2 py-1 border transition-all whitespace-nowrap #{@feed_type == 'global' && @theme.nil? ? 'border-acid-lime text-acid-lime bg-acid-lime/10' : 'border-steel text-ash hover:border-white hover:text-white'}" do %>
+      // GLOBAL
+    <% end %>
+
+    <% @themes.each do |theme| %>
+      <%= link_to timeline_path(feed: 'global', theme: theme.slug, view: params[:view]), 
+          class: "font-mono text-xs px-2 py-1 border transition-all whitespace-nowrap #{@theme == theme ? 'border-acid-lime text-acid-lime bg-acid-lime/10' : 'border-steel text-ash hover:border-white hover:text-white'}" do %>
+        // <%= theme.name.upcase %>
+      <% end %>
+    <% end %>
+  </div>
+
   <div class="flex gap-6 border-b border-steel pb-2">
-    <%= link_to timeline_path(view: 'new', theme: params[:theme]), 
+    <%= link_to timeline_path(view: 'new', feed: params[:feed], theme: params[:theme]), 
         class: "font-mono text-xs uppercase tracking-widest pb-2 border-b-2 transition-all #{@view == 'new' ? 'border-acid-lime text-acid-lime' : 'border-transparent text-ash hover:text-white'}" do %>
       [ NEW_TRANSMISSIONS ]
     <% end %>
     
-    <%= link_to timeline_path(view: 'voted', theme: params[:theme]),
+    <%= link_to timeline_path(view: 'voted', feed: params[:feed], theme: params[:theme]),
         class: "font-mono text-xs uppercase tracking-widest pb-2 border-b-2 transition-all #{@view == 'voted' ? 'border-acid-lime text-acid-lime' : 'border-transparent text-ash hover:text-white'}" do %>
       [ TOP_RATED ]
     <% end %>

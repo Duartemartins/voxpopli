@@ -4,8 +4,16 @@ class TimelineController < ApplicationController
   def index
     @view = params[:view].presence_in(%w[new voted]) || "new"
     @theme = Theme.find_by(slug: params[:theme]) if params[:theme].present?
+    @themes = Theme.all.order(:name)
 
-    base_posts = if user_signed_in?
+    # Determine feed type (global vs following)
+    default_feed = user_signed_in? && current_user.following.exists? ? "following" : "global"
+    @feed_type = params[:feed].presence_in(%w[following global]) || default_feed
+    
+    # Force global if not signed in
+    @feed_type = "global" unless user_signed_in?
+
+    base_posts = if @feed_type == "following"
       current_user.timeline
     else
       Post.original
