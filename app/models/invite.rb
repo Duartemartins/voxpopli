@@ -34,9 +34,11 @@ class Invite < ApplicationRecord
     raise "Invite already used" unless available?
 
     transaction do
-      update!(invitee: user, used_at: Time.current)
-      # Set the invited_by relationship on the user
-      user.update!(invited_by: inviter) if inviter.present?
+      if inviter.present?
+        update!(invitee: user, used_at: Time.current)
+        # Set the invited_by relationship on the user
+        user.update!(invited_by: inviter)
+      end
     end
   end
 

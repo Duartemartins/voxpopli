@@ -49,6 +49,36 @@ class InviteTest < ActiveSupport::TestCase
     end
   end
 
+  test "admin invite (no inviter) can be used multiple times" do
+    admin_invite = Invite.create!(expires_at: 1.day.from_now)
+    assert_nil admin_invite.inviter
+    
+    user1 = User.create!(
+      email: "user1@example.com",
+      username: "user1",
+      password: "password123"
+    )
+    
+    user2 = User.create!(
+      email: "user2@example.com",
+      username: "user2",
+      password: "password123"
+    )
+    
+    # First use
+    assert admin_invite.available?
+    admin_invite.use!(user1)
+    assert admin_invite.available?
+    assert_nil admin_invite.used_at
+    assert_nil admin_invite.invitee
+    
+    # Second use
+    admin_invite.use!(user2)
+    assert admin_invite.available?
+    assert_nil admin_invite.used_at
+    assert_nil admin_invite.invitee
+  end
+
   test "use! marks invite as used" do
     invite = invites(:available_invite)
     user = users(:charlie)
