@@ -17,7 +17,7 @@
   <% if @user.avatar.attached? %>
     <meta property="og:image" content="<%= url_for(@user.avatar) %>">
   <% else %>
-    <meta property="og:image" content="<%= request.base_url %>/social-card.svg">
+    <meta property="og:image" content="<%= request.base_url %>/social-card.png">
   <% end %>
   
   <!-- Twitter Card -->
@@ -27,7 +27,7 @@
   <% if @user.avatar.attached? %>
     <meta name="twitter:image" content="<%= url_for(@user.avatar) %>">
   <% else %>
-    <meta name="twitter:image" content="<%= request.base_url %>/social-card.svg">
+    <meta name="twitter:image" content="<%= request.base_url %>/social-card.png">
   <% end %>
 <% end %>
 
