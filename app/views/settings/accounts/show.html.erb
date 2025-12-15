@@ -4,38 +4,49 @@
   </h1>
 
   <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
-    <h2 class="font-mono text-lg font-bold text-white mb-2">INVITE_CODES</h2>
-    <p class="font-mono text-xs text-ash mb-4">Generate access keys for new operatives. Single use only.</p>
+    <div class="flex justify-between items-start">
+      <div>
+        <h2 class="font-mono text-lg font-bold text-white mb-2">INVITE_CODES</h2>
+        <p class="font-mono text-xs text-ash mb-4">Generate access keys for new operatives. Single use only.</p>
+      </div>
+      <%= link_to settings_invites_path,
+          class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 bg-steel/20 text-white border border-steel hover:bg-acid-lime hover:text-obsidian hover:border-acid-lime transition-all whitespace-nowrap flex-shrink-0 ml-4' do %>
+        [ MANAGE_INVITES ]
+      <% end %>
+    </div>
     
-    <% current_user.ensure_invite_codes! %>
     <div class="mt-4 space-y-3">
-      <% current_user.all_invite_codes.each do |invite| %>
-        <div class="flex items-center justify-between p-3 bg-obsidian border border-steel">
-          <div class="flex items-center gap-3">
-            <code class="font-mono text-sm <%= invite.used_at? ? 'text-steel line-through' : 'text-acid-lime' %>">
-              <%= invite.code %>
-            </code>
-            <% if invite.used_at? %>
-              <span class="font-mono text-[10px] text-ash uppercase">
-                CLAIMED_BY: <%= invite.invitee&.username || 'UNKNOWN' %>
-              </span>
-            <% end %>
+      <% if current_user.all_invite_codes.any? %>
+        <% current_user.all_invite_codes.each do |invite| %>
+          <div class="flex items-center justify-between p-3 bg-obsidian border border-steel">
+            <div class="flex items-center gap-3">
+              <code class="font-mono text-sm <%= invite.used_at? ? 'text-steel line-through' : 'text-acid-lime' %>">
+                <%= invite.code %>
+              </code>
+              <% if invite.used_at? %>
+                <span class="font-mono text-[10px] text-ash uppercase">
+                  CLAIMED_BY: <%= invite.invitee&.username || 'UNKNOWN' %>
+                </span>
+              <% end %>
+            </div>
+            <div class="flex items-center gap-2">
+              <% if invite.used_at? %>
+                <span class="px-2 py-1 text-[10px] font-mono uppercase bg-steel/20 text-steel border border-steel">DEPLETED</span>
+              <% else %>
+                <span class="px-2 py-1 text-[10px] font-mono uppercase bg-acid-lime/10 text-acid-lime border border-acid-lime">ACTIVE</span>
+                <button type="button" 
+                        data-controller="clipboard"
+                        data-clipboard-content-value="<%= invite.code %>"
+                        data-action="click->clipboard#copy"
+                        class="px-2 py-1 text-[10px] font-mono uppercase bg-acid-cyan/10 text-acid-cyan border border-acid-cyan hover:bg-acid-cyan hover:text-obsidian transition-colors cursor-pointer">
+                  COPY
+                </button>
+              <% end %>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <% if invite.used_at? %>
-              <span class="px-2 py-1 text-[10px] font-mono uppercase bg-steel/20 text-steel border border-steel">DEPLETED</span>
-            <% else %>
-              <span class="px-2 py-1 text-[10px] font-mono uppercase bg-acid-lime/10 text-acid-lime border border-acid-lime">ACTIVE</span>
-              <button type="button" 
-                      data-controller="clipboard"
-                      data-clipboard-content-value="<%= invite.code %>"
-                      data-action="click->clipboard#copy"
-                      class="px-2 py-1 text-[10px] font-mono uppercase bg-acid-cyan/10 text-acid-cyan border border-acid-cyan hover:bg-acid-cyan hover:text-obsidian transition-colors cursor-pointer">
-                COPY
-              </button>
-            <% end %>
-          </div>
-        </div>
+        <% end %>
+      <% else %>
+        <p class="font-mono text-xs text-ash">>> NO_CODES_GENERATED</p>
       <% end %>
     </div>
   </div>

@@ -124,7 +124,7 @@ class User < ApplicationRecord
   end
 
   def can_generate_invite_codes?
-    created_at <= INVITE_CODES_ELIGIBILITY_DAYS.days.ago
+    admin? || created_at <= INVITE_CODES_ELIGIBILITY_DAYS.days.ago
   end
 
   def days_until_invite_eligibility
