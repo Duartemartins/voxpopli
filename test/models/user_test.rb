@@ -359,18 +359,20 @@ class UserTest < ActiveSupport::TestCase
     assert_includes user.errors[:username], "is reserved"
   end
 
-  test "ensure_invite_codes! creates 5 invite codes for new user" do
+  test "ensure_invite_codes! creates invite codes for eligible user" do
     user = User.create!(
       email: "newinviteuser@example.com",
       username: "newinviteuser",
       password: "password123"
     )
+    # Make user eligible (7+ days old)
+    user.update_columns(created_at: 10.days.ago)
     assert_equal 0, user.invites_sent.count
 
     codes = user.ensure_invite_codes!
 
-    assert_equal 5, codes.count
-    assert_equal 5, user.invites_sent.count
+    assert_equal User::INVITE_CODES_LIMIT, codes.count
+    assert_equal User::INVITE_CODES_LIMIT, user.invites_sent.count
     codes.each do |invite|
       assert_not_nil invite.code
       assert invite.available?
@@ -378,34 +380,48 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test "ensure_invite_codes! does not create more than 5 codes" do
+  test "ensure_invite_codes! does not create codes for ineligible user" do
+    user = User.create!(
+      email: "newuser@example.com",
+      username: "newuser",
+      password: "password123"
+    )
+    # User is new, not eligible
+    codes = user.ensure_invite_codes!
+    assert_equal 0, codes.count
+    assert_equal 0, user.invites_sent.count
+  end
+
+  test "ensure_invite_codes! does not create more than limit" do
     user = User.create!(
       email: "limituser@example.com",
       username: "limituser",
       password: "password123"
     )
+    user.update_columns(created_at: 10.days.ago)
     user.ensure_invite_codes!
 
     # Call again - should not create more
     user.ensure_invite_codes!
 
-    assert_equal 5, user.invites_sent.count
+    assert_equal User::INVITE_CODES_LIMIT, user.invites_sent.count
   end
 
-  test "ensure_invite_codes! fills up to 5 if user has fewer" do
+  test "ensure_invite_codes! fills up to limit if user has fewer" do
     user = User.create!(
       email: "partialuser@example.com",
       username: "partialuser",
       password: "password123"
     )
+    user.update_columns(created_at: 10.days.ago)
 
-    # Create only 2 invites manually
-    2.times { user.invites_sent.create! }
-    assert_equal 2, user.invites_sent.count
+    # Create only 1 invite manually
+    user.invites_sent.create!(expires_at: 30.days.from_now)
+    assert_equal 1, user.invites_sent.count
 
     user.ensure_invite_codes!
 
-    assert_equal 5, user.invites_sent.count
+    assert_equal User::INVITE_CODES_LIMIT, user.invites_sent.count
   end
 
   test "invite_codes returns user invites in order" do
@@ -414,10 +430,11 @@ class UserTest < ActiveSupport::TestCase
       username: "orderuser",
       password: "password123"
     )
+    user.update_columns(created_at: 10.days.ago)
     user.ensure_invite_codes!
 
     codes = user.invite_codes
-    assert_equal 5, codes.count
+    assert_equal User::INVITE_CODES_LIMIT, codes.count
     assert codes.first.created_at <= codes.last.created_at
   end
 
@@ -427,6 +444,8 @@ class UserTest < ActiveSupport::TestCase
       username: "inviter",
       password: "password123"
     )
+    inviter.update_columns(created_at: 10.days.ago)
+
     invitee = User.create!(
       email: "invitee@example.com",
       username: "invitee",
@@ -452,5 +471,197 @@ class UserTest < ActiveSupport::TestCase
     assert_raises(RuntimeError, "Invite already used") do
       invite.use!(another_user)
     end
+  end
+
+  # Payment method tests
+  test "paid? returns true when payment_method is stripe and paid_at is present" do
+    user = users(:alice)
+    user.update!(payment_method: "stripe", paid_at: Time.current)
+    assert user.paid?
+  end
+
+  test "paid? returns false when payment_method is not stripe" do
+    user = users(:alice)
+    user.update!(payment_method: nil, paid_at: Time.current)
+    assert_not user.paid?
+  end
+
+  test "paid? returns false when paid_at is nil" do
+    user = users(:alice)
+    user.update!(payment_method: "stripe", paid_at: nil)
+    assert_not user.paid?
+  end
+
+  test "registered_via_invite? returns true when invite_used exists" do
+    user = users(:bob)
+    # bob has used_invite in fixtures
+    assert user.registered_via_invite?
+  end
+
+  test "registered_via_invite? returns false when no invite_used" do
+    user = users(:alice)
+    user.invite_used&.destroy
+    user.reload
+    assert_not user.registered_via_invite?
+  end
+
+  test "registration_method returns stripe when paid" do
+    user = users(:alice)
+    user.update!(payment_method: "stripe", paid_at: Time.current)
+    assert_equal "stripe", user.registration_method
+  end
+
+  test "registration_method returns invite when registered via invite" do
+    user = users(:bob)
+    assert_equal "invite", user.registration_method
+  end
+
+  test "registration_method returns unknown when neither" do
+    user = User.create!(email: "unknown@example.com", username: "unknownuser", password: "password123")
+    assert_equal "unknown", user.registration_method
+  end
+
+  # Invite code eligibility tests
+  test "can_generate_invite_codes? returns false for new users" do
+    user = User.create!(email: "new@example.com", username: "newuser", password: "password123")
+    assert_not user.can_generate_invite_codes?
+  end
+
+  test "can_generate_invite_codes? returns true after 7 days" do
+    user = User.create!(email: "old@example.com", username: "olduser", password: "password123")
+    user.update_columns(created_at: 8.days.ago)
+    assert user.can_generate_invite_codes?
+  end
+
+  test "days_until_invite_eligibility returns 0 when eligible" do
+    user = users(:alice)
+    user.update_columns(created_at: 10.days.ago)
+    assert_equal 0, user.days_until_invite_eligibility
+  end
+
+  test "days_until_invite_eligibility returns correct days when not eligible" do
+    user = User.create!(email: "new2@example.com", username: "newuser2", password: "password123")
+    user.update_columns(created_at: 2.days.ago)
+    assert_equal 5, user.days_until_invite_eligibility
+  end
+
+  test "available_invite_codes_count returns 0 when not eligible" do
+    user = User.create!(email: "new3@example.com", username: "newuser3", password: "password123")
+    assert_equal 0, user.available_invite_codes_count
+  end
+
+  test "available_invite_codes_count returns limit when eligible with no codes" do
+    user = User.create!(email: "eligible@example.com", username: "eligibleuser", password: "password123")
+    user.update_columns(created_at: 10.days.ago)
+    assert_equal User::INVITE_CODES_LIMIT, user.available_invite_codes_count
+  end
+
+  test "available_invite_codes_count decreases as codes are generated" do
+    user = User.create!(email: "gen@example.com", username: "genuser", password: "password123")
+    user.update_columns(created_at: 10.days.ago)
+
+    # Generate one code
+    user.invites_sent.create!(expires_at: 30.days.from_now)
+    assert_equal User::INVITE_CODES_LIMIT - 1, user.available_invite_codes_count
+  end
+
+  test "generate_invite_codes! returns empty when not eligible" do
+    user = User.create!(email: "notelig@example.com", username: "noteliguser", password: "password123")
+    codes = user.generate_invite_codes!
+    assert_empty codes
+  end
+
+  test "generate_invite_codes! creates codes with expiry when eligible" do
+    user = User.create!(email: "gencodes@example.com", username: "gencodesuser", password: "password123")
+    user.update_columns(created_at: 10.days.ago)
+
+    codes = user.generate_invite_codes!
+    assert_equal User::INVITE_CODES_LIMIT, codes.count
+
+    codes.each do |code|
+      assert_not_nil code.expires_at
+      assert code.expires_at > Time.current
+    end
+  end
+
+  test "generate_invite_codes! does not exceed limit" do
+    user = User.create!(email: "nolimit@example.com", username: "nolimituser", password: "password123")
+    user.update_columns(created_at: 10.days.ago)
+
+    # Generate max codes
+    user.generate_invite_codes!
+    assert_equal User::INVITE_CODES_LIMIT, user.invites_sent.available.count
+
+    # Try to generate more
+    more_codes = user.generate_invite_codes!
+    assert_empty more_codes
+    assert_equal User::INVITE_CODES_LIMIT, user.invites_sent.available.count
+  end
+
+  test "ensure_invite_codes! generates codes if below limit" do
+    user = User.create!(email: "ensure@example.com", username: "ensureuser", password: "password123")
+    user.update_columns(created_at: 10.days.ago)
+
+    codes = user.ensure_invite_codes!
+    assert_equal User::INVITE_CODES_LIMIT, codes.count
+  end
+
+  test "invite_codes returns only available codes" do
+    user = User.create!(email: "available@example.com", username: "availableuser", password: "password123")
+    user.update_columns(created_at: 10.days.ago)
+    user.generate_invite_codes!
+
+    # Use one code
+    code = user.invites_sent.first
+    code.update!(used_at: Time.current, invitee: users(:charlie))
+
+    assert_equal User::INVITE_CODES_LIMIT - 1, user.invite_codes.count
+  end
+
+  test "all_invite_codes returns all codes including used" do
+    user = User.create!(email: "all@example.com", username: "alluser", password: "password123")
+    user.update_columns(created_at: 10.days.ago)
+    user.generate_invite_codes!
+
+    # Use one code
+    code = user.invites_sent.first
+    code.update!(used_at: Time.current, invitee: users(:charlie))
+
+    assert_equal User::INVITE_CODES_LIMIT, user.all_invite_codes.count
+  end
+
+  # Invite tree tests
+  test "invited_by association" do
+    inviter = users(:alice)
+    invitee = User.create!(email: "invitee@example.com", username: "inviteeuser", password: "password123", invited_by: inviter)
+
+    assert_equal inviter, invitee.invited_by
+  end
+
+  test "invited_users association" do
+    inviter = users(:alice)
+    invitee = User.create!(email: "invitee2@example.com", username: "inviteeuser2", password: "password123", invited_by: inviter)
+
+    assert_includes inviter.invited_users, invitee
+  end
+
+  test "payments association" do
+    user = users(:alice)
+    payment = Payment.create!(user: user, amount_cents: 500, currency: "usd", status: "pending")
+
+    assert_includes user.payments, payment
+  end
+
+  # Constants tests
+  test "INVITE_CODES_LIMIT is 3" do
+    assert_equal 3, User::INVITE_CODES_LIMIT
+  end
+
+  test "INVITE_CODES_ELIGIBILITY_DAYS is 7" do
+    assert_equal 7, User::INVITE_CODES_ELIGIBILITY_DAYS
+  end
+
+  test "INVITE_CODE_EXPIRY_DAYS is 30" do
+    assert_equal 30, User::INVITE_CODE_EXPIRY_DAYS
   end
 end

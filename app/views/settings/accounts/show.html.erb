@@ -7,8 +7,9 @@
     <h2 class="font-mono text-lg font-bold text-white mb-2">INVITE_CODES</h2>
     <p class="font-mono text-xs text-ash mb-4">Generate access keys for new operatives. Single use only.</p>
     
+    <% current_user.ensure_invite_codes! %>
     <div class="mt-4 space-y-3">
-      <% current_user.ensure_invite_codes!.each do |invite| %>
+      <% current_user.all_invite_codes.each do |invite| %>
         <div class="flex items-center justify-between p-3 bg-obsidian border border-steel">
           <div class="flex items-center gap-3">
             <code class="font-mono text-sm <%= invite.used_at? ? 'text-steel line-through' : 'text-acid-lime' %>">

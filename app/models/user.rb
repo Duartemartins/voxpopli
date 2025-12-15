@@ -7,6 +7,11 @@ class User < ApplicationRecord
 
   LOOKING_FOR_OPTIONS = %w[cofounders beta_testers feedback investors hiring nothing].freeze
 
+  # Invite code constants
+  INVITE_CODES_LIMIT = 3
+  INVITE_CODES_ELIGIBILITY_DAYS = 7
+  INVITE_CODE_EXPIRY_DAYS = 30
+
   # Virtual attributes for registration
   attr_accessor :invite_code, :website_url
 
@@ -23,6 +28,13 @@ class User < ApplicationRecord
   has_many :webhooks, dependent: :destroy
   has_one :invite_used, class_name: "Invite", foreign_key: :invitee_id, dependent: :nullify
   has_many :invites_sent, class_name: "Invite", foreign_key: :inviter_id, dependent: :destroy
+
+  # Payment relationships
+  has_many :payments, dependent: :destroy
+
+  # Invite tree relationships
+  belongs_to :invited_by, class_name: "User", optional: true
+  has_many :invited_users, class_name: "User", foreign_key: :invited_by_id, dependent: :nullify
 
   has_many :active_follows, class_name: "Follow", foreign_key: :follower_id, dependent: :destroy
   has_many :passive_follows, class_name: "Follow", foreign_key: :followed_id, dependent: :destroy
@@ -87,25 +99,66 @@ class User < ApplicationRecord
         .includes(:user, :theme)
   end
 
-  INVITE_CODES_LIMIT = 5
+  # Payment methods
+  def paid?
+    payment_method == "stripe" && paid_at.present?
+  end
 
+  def registered_via_invite?
+    invite_used.present?
+  end
+
+  def registration_method
+    return "stripe" if paid?
+    return "invite" if registered_via_invite?
+    "unknown"
+  end
+
+  # Invite code methods
   def invite_codes
+    invites_sent.available.order(:created_at)
+  end
+
+  def all_invite_codes
     invites_sent.order(:created_at)
   end
 
+  def can_generate_invite_codes?
+    created_at <= INVITE_CODES_ELIGIBILITY_DAYS.days.ago
+  end
+
+  def days_until_invite_eligibility
+    return 0 if can_generate_invite_codes?
+    ((created_at + INVITE_CODES_ELIGIBILITY_DAYS.days - Time.current) / 1.day).ceil
+  end
+
+  def available_invite_codes_count
+    return 0 unless can_generate_invite_codes?
+    INVITE_CODES_LIMIT - invites_sent.available.count
+  end
+
   def generate_invite_codes!
-    remaining = INVITE_CODES_LIMIT - invites_sent.count
-    remaining.times { invites_sent.create! }
+    return [] unless can_generate_invite_codes?
+
+    remaining = available_invite_codes_count
+    codes = []
+    remaining.times do
+      codes << invites_sent.create!(
+        expires_at: INVITE_CODE_EXPIRY_DAYS.days.from_now
+      )
+    end
+    codes
   end
 
   def ensure_invite_codes!
-    generate_invite_codes! if invites_sent.count < INVITE_CODES_LIMIT
+    generate_invite_codes! if can_generate_invite_codes? && invites_sent.available.count < INVITE_CODES_LIMIT
     invite_codes
   end
 
   # Builder profile helpers
   def skills_list
-    skills || []
+    return skills if skills.is_a?(Array)
+    []
   end
 
   def skills_list=(value)
@@ -113,7 +166,8 @@ class User < ApplicationRecord
   end
 
   def launched_products_list
-    launched_products || []
+    return launched_products if launched_products.is_a?(Array)
+    []
   end
 
   def add_launched_product(name:, url:, description: nil, mrr: nil, revenue_confirmed: false)

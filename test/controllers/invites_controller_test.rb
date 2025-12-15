@@ -1,15 +1,32 @@
 require "test_helper"
 
 class InvitesControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @valid_invite = invites(:available_invite)
     @used_invite = invites(:used_invite)
     @expired_invite = invites(:expired_invite)
   end
 
-  test "new displays invite form" do
+  test "new displays join page with two registration paths" do
     get join_path
     assert_response :success
+    assert_select "h2", /JOIN_VOXPOPLI/
+    assert_select "h3", /INVITE_CODE/
+    assert_select "h3", /PAID_ACCESS/
+  end
+
+  test "new redirects authenticated user" do
+    sign_in users(:alice)
+    get join_path
+    assert_redirected_to root_path
+  end
+
+  test "new shows link to paid registration" do
+    get join_path
+    assert_response :success
+    assert_select "a[href='#{checkout_new_path}']"
   end
 
   test "verify with valid code redirects to registration" do

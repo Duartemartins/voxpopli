@@ -29,7 +29,7 @@ class RegistrationsController < Devise::RegistrationsController
   def validate_invite_code
     code = params[:invite_code] || params.dig(:user, :invite_code)
     unless code.present? && Invite.available.exists?(code: code)
-      redirect_to root_path, alert: "Valid invite code required to register"
+      redirect_to join_path, alert: "Valid invite code required to register. You can also pay $5 to register."
     end
   end
 

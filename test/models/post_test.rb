@@ -1,6 +1,8 @@
 require "test_helper"
 
 class PostTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   test "valid post" do
     post = Post.new(
       body: "Test post content",
@@ -175,5 +177,127 @@ class PostTest < ActiveSupport::TestCase
     )
     assert_not post.valid?
     assert_includes post.errors[:image], "must be less than 5MB"
+  end
+
+  # Notification tests
+  test "notify_mentions creates notifications for mentioned users" do
+    alice = users(:alice)
+    bob = users(:bob)
+
+    assert_difference "Notification.count", 1 do
+      Post.create!(
+        body: "Hey @#{bob.username} check this out!",
+        user: alice
+      )
+    end
+
+    notification = Notification.last
+    assert_equal bob, notification.user
+    assert_equal alice, notification.actor
+    assert_equal "mentioned", notification.action
+  end
+
+  test "notify_mentions does not notify the post author" do
+    alice = users(:alice)
+
+    assert_no_difference "Notification.count" do
+      Post.create!(
+        body: "I'm mentioning myself @#{alice.username}",
+        user: alice
+      )
+    end
+  end
+
+  test "notify_mentions handles multiple mentions" do
+    alice = users(:alice)
+    bob = users(:bob)
+    charlie = users(:charlie)
+
+    assert_difference "Notification.count", 2 do
+      Post.create!(
+        body: "Hey @#{bob.username} and @#{charlie.username}!",
+        user: alice
+      )
+    end
+  end
+
+  test "notify_mentions handles duplicate mentions" do
+    alice = users(:alice)
+    bob = users(:bob)
+
+    # Should only create one notification even with duplicate mentions
+    assert_difference "Notification.count", 1 do
+      Post.create!(
+        body: "@#{bob.username} @#{bob.username} mentioned twice",
+        user: alice
+      )
+    end
+  end
+
+  test "notify_mentions ignores non-existent usernames" do
+    alice = users(:alice)
+
+    assert_no_difference "Notification.count" do
+      Post.create!(
+        body: "Hey @nonexistentuser123 check this out!",
+        user: alice
+      )
+    end
+  end
+
+  # Webhook tests
+  test "trigger_webhooks queues jobs for active webhooks" do
+    alice = users(:alice)
+    webhook = alice.webhooks.create!(
+      url: "https://example.com/webhook",
+      secret: "secret123",
+      events: '["post.created"]',
+      active: true
+    )
+
+    assert_enqueued_with(job: WebhookDeliveryJob) do
+      Post.create!(
+        body: "Webhook trigger test",
+        user: alice
+      )
+    end
+  end
+
+  test "trigger_webhooks skips inactive webhooks" do
+    alice = users(:alice)
+    alice.webhooks.destroy_all # Ensure no other webhooks interfere
+
+    webhook = alice.webhooks.create!(
+      url: "https://example.com/webhook",
+      secret: "secret123",
+      events: '["post.created"]',
+      active: false
+    )
+
+    assert_no_enqueued_jobs(only: WebhookDeliveryJob) do
+      Post.create!(
+        body: "Inactive webhook test",
+        user: alice
+      )
+    end
+  end
+
+  test "trigger_webhooks skips webhooks not listening to post.created" do
+    alice = users(:alice)
+    alice.webhooks.destroy_all # Ensure no other webhooks interfere
+
+    webhook = alice.webhooks.create!(
+      url: "https://example.com/webhook",
+      secret: "secret123",
+      events: '["post.voted"]',
+      active: true
+    )
+
+    assert_no_enqueued_jobs(only: WebhookDeliveryJob) do
+      Post.create!(
+        body: "Wrong event webhook test",
+        user: alice
+      )
+    end
   end
 end

@@ -1,0 +1,104 @@
+<div class="max-w-2xl mx-auto mt-8">
+  <h1 class="font-mono text-2xl font-bold text-white mb-2 tracking-tighter flex items-center gap-2">
+    <span class="text-acid-lime">>></span> INVITE_CODES
+  </h1>
+  <p class="font-mono text-xs text-ash mb-8 uppercase tracking-widest">Invite new members to Voxpopli.</p>
+
+  <%# Eligibility Status %>
+  <div class="mb-8 p-6 border border-steel bg-carbon">
+    <h2 class="font-mono text-sm font-bold text-white mb-4 uppercase tracking-widest">STATUS</h2>
+    
+    <% if @can_generate %>
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-2 h-2 bg-acid-lime rounded-full"></div>
+        <span class="font-mono text-sm text-acid-lime">ELIGIBLE_TO_GENERATE</span>
+      </div>
+      
+      <% if @available_count > 0 %>
+        <%= button_to "GENERATE_CODES (#{@available_count} available)", settings_invites_path, 
+            method: :post,
+            class: 'bg-acid-lime text-obsidian font-mono font-bold uppercase tracking-widest py-2 px-4 hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none text-sm' %>
+      <% else %>
+        <p class="font-mono text-xs text-ash">You have reached the maximum of <%= User::INVITE_CODES_LIMIT %> invite codes.</p>
+      <% end %>
+    <% else %>
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-2 h-2 bg-acid-pink rounded-full"></div>
+        <span class="font-mono text-sm text-acid-pink">NOT_YET_ELIGIBLE</span>
+      </div>
+      <p class="font-mono text-xs text-ash">
+        You need to be a member for <%= User::INVITE_CODES_ELIGIBILITY_DAYS %> days before you can generate invite codes.
+        <br><span class="text-acid-cyan"><%= @days_until_eligible %> day(s) remaining</span>
+      </p>
+    <% end %>
+  </div>
+
+  <%# Invite Codes List %>
+  <div class="border border-steel bg-carbon">
+    <div class="p-4 border-b border-steel">
+      <h2 class="font-mono text-sm font-bold text-white uppercase tracking-widest">YOUR_INVITE_CODES</h2>
+    </div>
+
+    <% if @invites.any? %>
+      <div class="divide-y divide-steel">
+        <% @invites.each do |invite| %>
+          <div class="p-4 flex items-center justify-between">
+            <div>
+              <code class="font-mono text-lg text-white bg-obsidian px-3 py-1 border border-steel">
+                <%= invite.code %>
+              </code>
+              
+              <% if invite.used? %>
+                <span class="ml-3 font-mono text-xs text-ash">
+                  USED by <%= invite.invitee&.username || 'unknown' %>
+                  <span class="text-steel">// <%= invite.used_at.strftime('%Y-%m-%d') %></span>
+                </span>
+              <% elsif invite.expired? %>
+                <span class="ml-3 font-mono text-xs text-acid-pink">EXPIRED</span>
+              <% else %>
+                <span class="ml-3 font-mono text-xs text-acid-lime">AVAILABLE</span>
+                <% if invite.expires_at %>
+                  <span class="ml-2 font-mono text-[10px] text-ash">
+                    expires in <%= invite.days_until_expiry %> day(s)
+                  </span>
+                <% end %>
+              <% end %>
+            </div>
+            
+            <% if invite.available? %>
+              <button 
+                onclick="navigator.clipboard.writeText('<%= invite.code %>'); this.innerText = 'COPIED!'; setTimeout(() => this.innerText = 'COPY', 2000);"
+                class="font-mono text-xs text-acid-cyan hover:text-white uppercase tracking-widest cursor-pointer bg-transparent border-none">
+                COPY
+              </button>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="p-8 text-center">
+        <p class="font-mono text-sm text-ash">NO_INVITE_CODES_YET</p>
+        <% if @can_generate %>
+          <p class="font-mono text-xs text-steel mt-2">Generate your first invite codes above.</p>
+        <% else %>
+          <p class="font-mono text-xs text-steel mt-2">Come back in <%= @days_until_eligible %> day(s) to generate codes.</p>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Info Box %>
+  <div class="mt-8 p-4 border border-dashed border-steel bg-obsidian">
+    <p class="font-mono text-xs text-ash">
+      <span class="text-acid-lime font-bold">>> INVITE_RULES</span><br><br>
+      <span class="text-white">++</span> You can generate up to <%= User::INVITE_CODES_LIMIT %> invite codes<br>
+      <span class="text-white">++</span> Codes expire after <%= User::INVITE_CODE_EXPIRY_DAYS %> days<br>
+      <span class="text-white">++</span> You must be a member for <%= User::INVITE_CODES_ELIGIBILITY_DAYS %> days to generate codes<br>
+      <span class="text-white">++</span> Share codes responsibly - you're vouching for those you invite
+    </p>
+  </div>
+
+  <div class="mt-8 text-center">
+    <%= link_to "[ BACK_TO_SETTINGS ]", settings_account_path, class: "font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest" %>
+  </div>
+</div>

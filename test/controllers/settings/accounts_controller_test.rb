@@ -44,52 +44,45 @@ module Settings
     # Invite codes display tests
     test "show displays invite codes section" do
       sign_in @user
+      # Make user eligible
+      @user.update_columns(created_at: 10.days.ago)
+      @user.ensure_invite_codes!
+      
       get settings_account_path
       assert_response :success
-      assert_select "h2", text: "Invite Codes"
+      assert_match "INVITE_CODES", response.body
     end
 
-    test "show creates 5 invite codes for user without any" do
-      # Create a fresh user with no invite codes
-      fresh_user = User.create!(
-        email: "fresh@example.com",
-        username: "freshuser",
+    test "show displays invite codes for eligible user" do
+      # Create an eligible user with invite codes
+      eligible_user = User.create!(
+        email: "eligible@example.com",
+        username: "eligibleuser",
         password: "password123"
       )
-      assert_equal 0, fresh_user.invites_sent.count
+      eligible_user.update_columns(created_at: 10.days.ago)
+      eligible_user.ensure_invite_codes!
+      
+      assert_equal User::INVITE_CODES_LIMIT, eligible_user.invites_sent.count
 
-      sign_in fresh_user
+      sign_in eligible_user
       get settings_account_path
 
       assert_response :success
-      fresh_user.reload
-      assert_equal 5, fresh_user.invites_sent.count
+      # Should display invite codes
+      eligible_user.invite_codes.each do |invite|
+        assert_match invite.code, response.body
+      end
     end
 
-    test "show displays all 5 invite codes" do
-      sign_in @user
-      get settings_account_path
-
-      assert_response :success
-      # Should display 5 invite code entries
-      assert_select ".bg-gray-50.rounded-lg", count: 5
-    end
-
-    test "show displays available badge for unused codes" do
-      sign_in @user
-      get settings_account_path
-
-      assert_response :success
-      assert_select "span", text: "Available"
-    end
-
-    test "show displays used badge for used codes" do
+    test "show displays used status for used codes" do
       # Create user with some used invite codes
       inviter = User.create!(
         email: "inviter2@example.com",
         username: "inviter2",
         password: "password123"
       )
+      inviter.update_columns(created_at: 10.days.ago)
       inviter.ensure_invite_codes!
 
       # Use one of the codes
@@ -98,14 +91,15 @@ module Settings
         username: "invitee2",
         password: "password123"
       )
-      inviter.invite_codes.first.use!(invitee)
+      inviter.invites_sent.available.first.use!(invitee)
 
       sign_in inviter
       get settings_account_path
 
       assert_response :success
-      assert_select "span", text: "Used"
-      assert_select "span", text: "Available", count: 4
+      # Should show the used code as depleted
+      assert_match "DEPLETED", response.body
+      assert_match "ACTIVE", response.body
     end
 
     test "show displays who used the invite code" do
@@ -114,6 +108,7 @@ module Settings
         username: "inviter3",
         password: "password123"
       )
+      inviter.update_columns(created_at: 10.days.ago)
       inviter.ensure_invite_codes!
 
       invitee = User.create!(
@@ -121,7 +116,7 @@ module Settings
         username: "invitee3",
         password: "password123"
       )
-      inviter.invite_codes.first.use!(invitee)
+      inviter.invites_sent.available.first.use!(invitee)
 
       sign_in inviter
       get settings_account_path
@@ -136,6 +131,7 @@ module Settings
         username: "inviter4",
         password: "password123"
       )
+      inviter.update_columns(created_at: 10.days.ago)
       inviter.ensure_invite_codes!
 
       invitee = User.create!(
@@ -143,18 +139,23 @@ module Settings
         username: "invitee4",
         password: "password123"
       )
-      inviter.invite_codes.first.use!(invitee)
+      inviter.invites_sent.available.first.use!(invitee)
 
       sign_in inviter
       get settings_account_path
 
       assert_response :success
-      # Should have 4 Copy buttons (one for each available code)
-      assert_select "button", text: "Copy", count: 4
+      # The system replenishes codes, so after using one, a new one is created
+      # Total all codes = LIMIT + 1 used = 4 total (1 used, 3 available)
+      # Should have COPY buttons for all available codes (3)
+      assert_select "button", text: "COPY", count: User::INVITE_CODES_LIMIT
     end
 
     test "show displays invite code values" do
       sign_in @user
+      @user.update_columns(created_at: 10.days.ago)
+      @user.ensure_invite_codes!
+      
       get settings_account_path
 
       @user.invite_codes.each do |invite|

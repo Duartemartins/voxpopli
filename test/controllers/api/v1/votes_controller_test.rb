@@ -116,6 +116,19 @@ module Api
         assert_response :not_found
       end
 
+      test "voting on own post returns unprocessable_entity" do
+        # Create a post by alice
+        own_post = Post.create!(body: "Alice's own post", user: @user)
+
+        post api_v1_post_vote_path(own_post),
+             params: { value: 1 },
+             headers: auth_headers(@api_key),
+             as: :json
+
+        assert_response :unprocessable_entity
+        assert_includes response.parsed_body["errors"], "You cannot vote on your own post"
+      end
+
       private
 
       def auth_headers(api_key)

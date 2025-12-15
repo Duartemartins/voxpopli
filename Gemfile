@@ -22,6 +22,9 @@ gem "jbuilder"
 # Authentication
 gem "devise"
 
+# Payments
+gem "stripe"
+
 # Rate limiting
 gem "rack-attack"
 

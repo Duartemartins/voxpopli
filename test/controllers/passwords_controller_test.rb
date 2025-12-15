@@ -16,15 +16,15 @@ class PasswordsControllerTest < ActionDispatch::IntegrationTest
   test "new shows sign in link on passwords page" do
     get new_user_password_path
     assert_response :success
-    # Should show "Already have an account?" link
-    assert_select "a[href='#{new_user_session_path}']", text: "Already have an account? Sign in"
+    # Should show login link in Cyber Brutalist style
+    assert_select "a[href='#{new_user_session_path}']", text: "EXISTING_OPERATIVE? // LOGIN"
   end
 
   test "new does not show forgot password link on passwords page" do
     get new_user_password_path
     assert_response :success
     # Should not show forgot password link on the passwords page itself
-    assert_select "a", text: "Forgot your password?", count: 0
+    assert_select "a", text: "LOST_CREDENTIALS? // RECOVER", count: 0
   end
 
   test "create with valid email sends reset instructions" do
@@ -58,7 +58,7 @@ class PasswordsControllerTest < ActionDispatch::IntegrationTest
     token = @user.send_reset_password_instructions
     get edit_user_password_path(reset_password_token: token)
     assert_response :success
-    assert_select "a[href='#{new_user_session_path}']", text: "Already have an account? Sign in"
+    assert_select "a[href='#{new_user_session_path}']", text: "EXISTING_OPERATIVE? // LOGIN"
   end
 
   test "update with valid token and password resets password" do

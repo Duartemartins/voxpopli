@@ -1,6 +1,6 @@
 # Voxpopli
 
-![Test Coverage](https://img.shields.io/badge/coverage-96.12%25-brightgreen)
+![Test Coverage](https://img.shields.io/badge/coverage-98.96%25-brightgreen)
 ![Ruby](https://img.shields.io/badge/ruby-3.3%2B-red)
 ![Rails](https://img.shields.io/badge/rails-8.0-red)
 

@@ -10,13 +10,13 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
   test "new requires valid invite code" do
     get new_user_registration_path
-    assert_redirected_to root_path
-    assert_equal "Valid invite code required to register", flash[:alert]
+    assert_redirected_to join_path
+    assert_equal "Valid invite code required to register. You can also pay $5 to register.", flash[:alert]
   end
 
   test "new with invalid invite code redirects" do
     get new_user_registration_path(invite_code: "INVALID")
-    assert_redirected_to root_path
+    assert_redirected_to join_path
   end
 
   test "new with valid invite code shows form" do
@@ -211,8 +211,8 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     @invite.use!(users(:bob))
 
     get new_user_registration_path(invite_code: @invite.code)
-    assert_redirected_to root_path
-    assert_equal "Valid invite code required to register", flash[:alert]
+    assert_redirected_to join_path
+    assert_equal "Valid invite code required to register. You can also pay $5 to register.", flash[:alert]
   end
 
   test "new with expired invite code redirects" do
@@ -223,8 +223,8 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     )
 
     get new_user_registration_path(invite_code: expired_invite.code)
-    assert_redirected_to root_path
-    assert_equal "Valid invite code required to register", flash[:alert]
+    assert_redirected_to join_path
+    assert_equal "Valid invite code required to register. You can also pay $5 to register.", flash[:alert]
   end
 
   test "new displays invite code in hidden field" do
@@ -405,13 +405,13 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
   test "validate_invite_code with nil code redirects" do
     get new_user_registration_path, params: { invite_code: nil }
-    assert_redirected_to root_path
-    assert_equal "Valid invite code required to register", flash[:alert]
+    assert_redirected_to join_path
+    assert_equal "Valid invite code required to register. You can also pay $5 to register.", flash[:alert]
   end
 
   test "validate_invite_code with empty code redirects" do
     get new_user_registration_path, params: { invite_code: "" }
-    assert_redirected_to root_path
-    assert_equal "Valid invite code required to register", flash[:alert]
+    assert_redirected_to join_path
+    assert_equal "Valid invite code required to register. You can also pay $5 to register.", flash[:alert]
   end
 end

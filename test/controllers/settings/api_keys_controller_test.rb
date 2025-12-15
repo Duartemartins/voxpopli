@@ -15,7 +15,7 @@ module Settings
       sign_in @user
       get settings_api_keys_path
       assert_response :success
-      assert_select "h1", "API Keys"
+      assert_match "API_ACCESS_CONTROL", response.body
     end
 
     test "index lists user api keys" do

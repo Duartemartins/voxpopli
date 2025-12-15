@@ -13,6 +13,13 @@ Rails.application.routes.draw do
   get "join", to: "invites#new", as: :join
   post "join", to: "invites#verify", as: :verify_invite
 
+  # Stripe checkout
+  get "checkout", to: "checkouts#new", as: :checkout_new
+  post "checkout", to: "checkouts#create", as: :checkout
+  get "checkout/success", to: "checkouts#success", as: :checkout_success
+  get "checkout/cancel", to: "checkouts#cancel", as: :checkout_cancel
+  post "checkout/webhook", to: "checkouts#webhook", as: :checkout_webhook
+
   resources :posts, only: [ :show, :create, :destroy ] do
     resource :vote, only: [ :create, :destroy ]
   end
@@ -24,6 +31,7 @@ Rails.application.routes.draw do
   namespace :settings do
     resource :account, only: [ :show, :destroy ]
     resources :api_keys, only: [ :index, :create, :destroy ]
+    resources :invites, only: [ :index, :create ]
   end
 
   namespace :api do

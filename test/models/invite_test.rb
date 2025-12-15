@@ -64,6 +64,17 @@ class InviteTest < ActiveSupport::TestCase
     assert_not invite.available?
   end
 
+  test "use! sets invited_by on user" do
+    inviter = users(:alice)
+    invite = Invite.create!(inviter: inviter, expires_at: 30.days.from_now)
+    user = users(:charlie)
+
+    invite.use!(user)
+
+    user.reload
+    assert_equal inviter, user.invited_by
+  end
+
   test "use! raises error if already used" do
     invite = invites(:used_invite)
 
@@ -198,5 +209,75 @@ class InviteTest < ActiveSupport::TestCase
     invite = Invite.create!(inviter: users(:alice), expires_at: 1.week.from_now)
     assert invite.valid?(:use)
     assert_empty invite.errors[:base]
+  end
+
+  # New tests for updated Invite model
+  test "used? returns true when used_at is present" do
+    invite = invites(:used_invite)
+    assert invite.used?
+  end
+
+  test "used? returns false when used_at is nil" do
+    invite = invites(:available_invite)
+    assert_not invite.used?
+  end
+
+  test "expired? returns true for past expires_at" do
+    invite = invites(:expired_invite)
+    assert invite.expired?
+  end
+
+  test "expired? returns false for future expires_at" do
+    invite = invites(:available_invite)
+    assert_not invite.expired?
+  end
+
+  test "expired? returns false for used invite even if expired" do
+    invite = Invite.create!(inviter: users(:alice))
+    invite.update_columns(used_at: 1.day.ago, expires_at: 2.days.ago)
+    assert_not invite.expired?  # Used invite is not considered "expired"
+  end
+
+  test "days_until_expiry returns nil when expires_at is nil" do
+    invite = invites(:no_expiry_invite)
+    assert_nil invite.days_until_expiry
+  end
+
+  test "days_until_expiry returns 0 when expired" do
+    invite = invites(:expired_invite)
+    assert_equal 0, invite.days_until_expiry
+  end
+
+  test "days_until_expiry returns correct number of days" do
+    invite = Invite.create!(inviter: users(:alice), expires_at: 5.days.from_now)
+    assert_equal 5, invite.days_until_expiry
+  end
+
+  test "scope used returns only used invites" do
+    used = Invite.used
+    assert used.all?(&:used?)
+  end
+
+  test "scope expired returns only expired invites" do
+    expired = Invite.expired
+    expired.each do |invite|
+      assert invite.expires_at.present?
+      assert invite.expires_at <= Time.current
+      assert_nil invite.used_at
+    end
+  end
+
+  test "sets default expiry when inviter is present" do
+    invite = Invite.create!(inviter: users(:alice))
+    assert_not_nil invite.expires_at
+    assert invite.expires_at > Time.current
+    assert invite.expires_at <= (User::INVITE_CODE_EXPIRY_DAYS + 1).days.from_now
+  end
+
+  test "does not set default expiry when inviter is nil" do
+    invite = Invite.create!
+    # When no inviter, expires_at is only set if explicitly provided
+    # The set_default_expiry only triggers when inviter is present
+    assert_nil invite.expires_at
   end
 end

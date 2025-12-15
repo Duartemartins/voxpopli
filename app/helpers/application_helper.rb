@@ -7,8 +7,8 @@ module ApplicationHelper
     }
     size_class = sizes[size] || sizes[:medium]
 
-    if user.avatar_url.present?
-      image_tag user.avatar_url,
+    if user.avatar.attached?
+      image_tag user.avatar,
                 alt: "#{user.display_name || user.username}'s avatar",
                 class: "#{size_class} rounded-full object-cover"
     else

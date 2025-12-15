@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_15_201020) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_15_205532) do
   create_table "active_storage_attachments", id: :string, force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -103,6 +103,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_201020) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
+  create_table "payments", id: :string, force: :cascade do |t|
+    t.string "user_id", null: false
+    t.integer "amount_cents", default: 500, null: false
+    t.string "currency", default: "usd", null: false
+    t.string "stripe_payment_id"
+    t.string "stripe_session_id"
+    t.string "status", default: "pending", null: false
+    t.string "payment_method"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_payments_on_status"
+    t.index ["stripe_payment_id"], name: "index_payments_on_stripe_payment_id", unique: true, where: "stripe_payment_id IS NOT NULL"
+    t.index ["stripe_session_id"], name: "index_payments_on_stripe_session_id", unique: true, where: "stripe_session_id IS NOT NULL"
+    t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
   create_table "posts", id: :string, force: :cascade do |t|
     t.string "user_id", null: false
     t.string "theme_id"
@@ -161,9 +177,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_201020) do
     t.string "looking_for"
     t.text "skills", default: "[]"
     t.text "launched_products", default: "[]"
+    t.string "invited_by_id"
+    t.string "payment_method"
+    t.datetime "paid_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["github_username"], name: "index_users_on_github_username", unique: true, where: "github_username IS NOT NULL"
+    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
@@ -203,10 +223,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_201020) do
   add_foreign_key "invites", "users", column: "inviter_id"
   add_foreign_key "notifications", "users"
   add_foreign_key "notifications", "users", column: "actor_id"
+  add_foreign_key "payments", "users"
   add_foreign_key "posts", "posts", column: "parent_id"
   add_foreign_key "posts", "posts", column: "repost_of_id"
   add_foreign_key "posts", "themes"
   add_foreign_key "posts", "users"
+  add_foreign_key "users", "users", column: "invited_by_id"
   add_foreign_key "votes", "posts"
   add_foreign_key "votes", "users"
   add_foreign_key "webhooks", "users"

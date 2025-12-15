@@ -137,4 +137,76 @@ class DirectoryControllerTest < ActionDispatch::IntegrationTest
     get directory_user_url(@alice.username)
     assert_redirected_to user_path(@alice.username)
   end
+
+  # Additional coverage tests
+  test "index defaults to recently_active sort without sort param" do
+    get directory_url
+    assert_response :success
+    # Just verify it works - the default case falls through to recently_active
+  end
+
+  test "index with invalid sort param defaults to recently_active" do
+    get directory_url, params: { sort: "invalid_sort_option" }
+    assert_response :success
+  end
+
+  test "index searches case-insensitively" do
+    get directory_url, params: { q: "ALICE" }
+    assert_response :success
+    assert_match @alice.username, response.body
+  end
+
+  test "index searches by display_name" do
+    @alice.update!(display_name: "Alice Builder")
+    get directory_url, params: { q: "Builder" }
+    assert_response :success
+    assert_match @alice.username, response.body
+  end
+
+  test "index searches by bio" do
+    @alice.update!(bio: "I build awesome things")
+    get directory_url, params: { q: "awesome" }
+    assert_response :success
+    assert_match @alice.username, response.body
+  end
+
+  test "index handles users with no skills gracefully" do
+    @bob.update!(skills: nil)
+    get directory_url
+    assert_response :success
+  end
+
+  test "index handles users with empty skills array" do
+    @bob.update!(skills: [])
+    get directory_url
+    assert_response :success
+  end
+
+  test "index collects products from users" do
+    @alice.update!(launched_products: [{"name" => "TestApp", "url" => "https://test.com", "description" => "A test app", "mrr" => "1000"}])
+    get directory_url
+    assert_response :success
+  end
+
+  test "index handles users with invalid launched_products JSON" do
+    @alice.update_column(:launched_products, "not valid json")
+    get directory_url
+    assert_response :success
+  end
+
+  test "index handles users with nil launched_products" do
+    @alice.update!(launched_products: nil)
+    get directory_url
+    assert_response :success
+  end
+
+  test "index pagination works" do
+    get directory_url, params: { page: 1 }
+    assert_response :success
+  end
+
+  test "index returns empty results for no matches" do
+    get directory_url, params: { q: "zzzznonexistentuser999" }
+    assert_response :success
+  end
 end

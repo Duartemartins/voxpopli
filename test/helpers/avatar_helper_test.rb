@@ -19,12 +19,12 @@ class AvatarHelperTest < ActionView::TestCase
     assert_match /<minidenticon-svg/, result
     assert_match /username="bob"/, result
     assert_match /style="color: #CCFF00;"/, result
-    assert_match /class="w-10 h-10 border border-steel bg-carbon p-1"/, result
+    assert_match /class="w-10 h-10 border border-steel bg-carbon block"/, result
   end
 
   test "user_avatar accepts custom classes" do
     user = users(:bob)
     result = user_avatar(user, classes: "w-20 h-20")
-    assert_match /class="w-20 h-20 border border-steel bg-carbon p-1"/, result
+    assert_match /class="w-20 h-20 border border-steel bg-carbon block"/, result
   end
 end

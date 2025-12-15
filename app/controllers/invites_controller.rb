@@ -1,6 +1,9 @@
 class InvitesController < ApplicationController
   def new
-    # Show form to enter invite code
+    # Show form to choose registration method (invite code or paid)
+    if user_signed_in?
+      redirect_to root_path, notice: "You are already registered"
+    end
   end
 
   def verify
