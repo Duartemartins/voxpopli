@@ -6,6 +6,8 @@
 
 A privacy-first, open source microblogging platform. 
 
+![Voxpopli Screenshot](docs/screenshot.png)
+
 ## Features
 
 - **Twitter-like posts** - Simple text posts without character limits
