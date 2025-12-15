@@ -198,6 +198,12 @@
 
   <!-- Posts -->
   <div>
+    <% if user_signed_in? && current_user == @user %>
+      <div class="mb-8">
+        <%= render 'posts/form' %>
+      </div>
+    <% end %>
+
     <h2 class="font-mono text-xs text-ash uppercase tracking-widest mb-4">TRANSMISSIONS</h2>
     <div class="space-y-6">
       <% if @posts.any? %>
