@@ -2,44 +2,19 @@
   <%= render @post %>
 
   <% if user_signed_in? %>
-    <div data-controller="image-preview">
-      <%= form_with model: Post.new, class: 'bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]', id: 'reply-form' do |f| %>
-        <div class="font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest">>> TRANSMIT_REPLY</div>
-        <%= f.hidden_field :parent_id, value: @post.id %>
-        <%= f.text_area :body, 
-            placeholder: "Enter reply data...",
-            class: 'w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all resize-none placeholder-steel',
-            rows: 3 %>
-        <div class="flex items-center justify-between mt-4 border-t border-steel pt-4">
-          <label class="flex items-center gap-2 cursor-pointer text-ash hover:text-acid-lime transition-colors group">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:drop-shadow-[0_0_5px_#CCFF00]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span class="font-mono text-xs uppercase tracking-widest">ATTACH_IMG</span>
-            <%= f.file_field :image, accept: 'image/*', class: 'hidden', data: { image_preview_target: 'input', action: 'change->image-preview#preview' } %>
-          </label>
-          <%= f.submit 'TRANSMIT_REPLY', class: 'bg-acid-lime text-obsidian font-mono font-bold uppercase tracking-widest px-6 py-2 hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none' %>
-        </div>
-        <div data-image-preview-target="preview" class="mt-4 hidden border border-steel p-2 bg-obsidian">
-          <div class="relative inline-block">
-            <img data-image-preview-target="previewImage" src="" alt="Preview" class="max-h-48 border border-steel" />
-            <button type="button" data-action="click->image-preview#clear" class="absolute top-1 right-1 bg-obsidian border border-acid-pink text-acid-pink p-1 hover:bg-acid-pink hover:text-obsidian transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      <% end %>
+        <div class="mt-8">
+      <%= render 'reply_form', post: @post %>
     </div>
   <% end %>
 
   <div class="space-y-4">
     <h3 class="font-mono text-xs text-acid-lime uppercase tracking-widest border-b border-steel pb-2">>> REPLY_STREAM</h3>
-    <% if @replies.any? %>
-      <%= render @replies %>
-    <% else %>
-      <p class="font-mono text-sm text-ash">NO_DATA // Initiate first response transmission.</p>
-    <% end %>
+    <div id="replies" class="space-y-4">
+      <% if @replies.any? %>
+        <%= render @replies %>
+      <% else %>
+        <p id="no-replies" class="font-mono text-sm text-ash">NO_DATA // Initiate first response transmission.</p>
+      <% end %>
+    </div>
   </div>
 </div>

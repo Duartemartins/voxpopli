@@ -1,7 +1,18 @@
-<%= turbo_stream.prepend "posts" do %>
-  <%= render @post %>
-<% end %>
+<% if @post.parent_id.present? %>
+  <%= turbo_stream.remove "no-replies" %>
+  <%= turbo_stream.append "replies" do %>
+    <%= render @post %>
+  <% end %>
 
-<%= turbo_stream.replace "new_post_form_container" do %>
-  <%= render 'posts/form' %>
+  <%= turbo_stream.replace "reply_form_container" do %>
+    <%= render 'posts/reply_form', post: @post.parent %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.prepend "posts" do %>
+    <%= render @post %>
+  <% end %>
+
+  <%= turbo_stream.replace "new_post_form_container" do %>
+    <%= render 'posts/form' %>
+  <% end %>
 <% end %>
