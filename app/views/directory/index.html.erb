@@ -3,6 +3,19 @@
 <% content_for :head do %>
   <meta name="description" content="Discover indie builders, makers, and founders. Connect with builders who are creating products and sharing their journey.">
   <link rel="canonical" href="<%= directory_url %>">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Builder Directory | Voxpopli">
+  <meta property="og:description" content="Discover indie builders, makers, and founders. Connect with builders who are creating products and sharing their journey.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= directory_url %>">
+  <meta property="og:image" content="<%= request.base_url %>/social-card.svg">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Builder Directory | Voxpopli">
+  <meta name="twitter:description" content="Discover indie builders, makers, and founders. Connect with builders who are creating products and sharing their journey.">
+  <meta name="twitter:image" content="<%= request.base_url %>/social-card.svg">
 <% end %>
 
 <% view_mode = params[:view] == "list" ? "list" : "grid" %>

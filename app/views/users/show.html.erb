@@ -14,11 +14,21 @@
   <meta property="og:description" content="<%= @user.tagline || @user.bio %>">
   <meta property="og:type" content="profile">
   <meta property="og:url" content="<%= user_url(@user.username) %>">
+  <% if @user.avatar.attached? %>
+    <meta property="og:image" content="<%= url_for(@user.avatar) %>">
+  <% else %>
+    <meta property="og:image" content="<%= request.base_url %>/social-card.svg">
+  <% end %>
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="<%= @user.display_name || @user.username %>">
   <meta name="twitter:description" content="<%= @user.tagline || @user.bio %>">
+  <% if @user.avatar.attached? %>
+    <meta name="twitter:image" content="<%= url_for(@user.avatar) %>">
+  <% else %>
+    <meta name="twitter:image" content="<%= request.base_url %>/social-card.svg">
+  <% end %>
 <% end %>
 
 <div class="space-y-8">
@@ -205,7 +215,7 @@
     <% end %>
 
     <h2 class="font-mono text-xs text-ash uppercase tracking-widest mb-4">TRANSMISSIONS</h2>
-    <div class="space-y-6">
+    <div id="posts" class="space-y-6">
       <% if @posts.any? %>
         <%= render @posts %>
       <% else %>

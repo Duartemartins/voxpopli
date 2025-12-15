@@ -1,3 +1,23 @@
+<% content_for :title, "Voxpopli | The Voice of the People" %>
+
+<% content_for :head do %>
+  <meta name="description" content="A cyberpunk-themed community for indie hackers and builders. Share your journey, get feedback, and connect with other makers.">
+  <link rel="canonical" href="<%= timeline_url %>">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Voxpopli | The Voice of the People">
+  <meta property="og:description" content="A cyberpunk-themed community for indie hackers and builders. Share your journey, get feedback, and connect with other makers.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= timeline_url %>">
+  <meta property="og:image" content="<%= request.base_url %>/social-card.svg">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Voxpopli | The Voice of the People">
+  <meta name="twitter:description" content="A cyberpunk-themed community for indie hackers and builders. Share your journey, get feedback, and connect with other makers.">
+  <meta name="twitter:image" content="<%= request.base_url %>/social-card.svg">
+<% end %>
+
 <div class="space-y-8">
   <% if user_signed_in? %>
     <%= render 'posts/form' %>
