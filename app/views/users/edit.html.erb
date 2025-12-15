@@ -92,13 +92,47 @@
       
       <div data-products-target="container" class="space-y-4">
         <% @user.launched_products_list.each_with_index do |product, index| %>
-          <div class="product-entry border border-steel p-4 bg-obsidian/50">
+          <div class="product-entry border border-steel p-4 bg-obsidian/50" data-controller="badge">
             <div class="flex items-start justify-between mb-3">
               <span class="font-mono text-xs text-acid-lime uppercase">PRODUCT_<%= index + 1 %></span>
-              <button type="button" data-action="products#remove" class="font-mono text-xs text-acid-pink hover:text-white uppercase tracking-widest">
-                [ REMOVE ]
-              </button>
+              <div class="flex gap-4">
+                <button type="button" data-action="click->badge#open" class="font-mono text-xs text-acid-cyan hover:text-white uppercase tracking-widest">
+                  [ GET_BADGE ]
+                </button>
+                <button type="button" data-action="products#remove" class="font-mono text-xs text-acid-pink hover:text-white uppercase tracking-widest">
+                  [ REMOVE ]
+                </button>
+              </div>
             </div>
+
+            <dialog data-badge-target="modal" class="bg-carbon border border-acid-lime p-6 text-white shadow-[0_0_20px_rgba(204,255,0,0.2)] backdrop:bg-black/80 max-w-lg w-full m-auto">
+              <div class="flex justify-between items-center mb-6">
+                <h3 class="font-mono text-lg text-acid-lime">>> EMBED_BADGE_CODE</h3>
+                <button type="button" data-action="click->badge#close" class="text-ash hover:text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <p class="font-mono text-xs text-ash mb-4">Copy this code to your website to link back to your profile.</p>
+              
+              <div class="mb-6 flex justify-center bg-black p-8 border border-steel border-dashed">
+                <!-- Preview -->
+                <img src="/badges/featured.svg" alt="As Seen on Voxpopuli" />
+              </div>
+
+              <div class="relative">
+                <textarea readonly class="w-full h-24 bg-obsidian border border-steel text-acid-lime font-mono text-xs p-4 mb-4 focus:outline-none focus:border-acid-lime resize-none" onclick="this.select()"><a href="<%= user_url(@user) %>" target="_blank" title="As Seen on Voxpopuli"><img src="<%= request.base_url %>/badges/featured.svg" alt="As Seen on Voxpopuli" width="200" height="50" /></a></textarea>
+                <div class="absolute top-2 right-2 text-[10px] text-ash uppercase pointer-events-none">HTML</div>
+              </div>
+              
+              <div class="flex justify-end">
+                <button type="button" data-action="click->badge#close" class="font-mono text-xs text-white hover:text-acid-lime uppercase border border-steel px-4 py-2 hover:border-acid-lime transition-all">
+                  [ CLOSE_TERMINAL ]
+                </button>
+              </div>
+            </dialog>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
