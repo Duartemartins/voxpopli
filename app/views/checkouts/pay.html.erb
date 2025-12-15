@@ -1,0 +1,32 @@
+<div class="max-w-md mx-auto mt-12 border border-acid-lime bg-carbon p-8 shadow-[8px_8px_0_0_#CCFF00]">
+  <h2 class="font-mono text-2xl font-bold text-white mb-2 tracking-tighter flex items-center gap-2">
+    <span class="text-acid-lime">>></span> COMPLETE_PAYMENT
+  </h2>
+  <p class="font-mono text-xs text-ash mb-8 uppercase tracking-widest">Secure checkout via Stripe.</p>
+
+  <!-- Stripe Embedded Checkout Container -->
+  <div id="checkout">
+    <!-- Checkout will insert the payment form here -->
+  </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script nonce="<%= content_security_policy_nonce %>">
+  // Initialize Stripe.js
+  const stripe = Stripe('<%= Rails.application.credentials.dig(:stripe, :publishable_key) %>');
+
+  initialize();
+
+  // Fetch Checkout Session and retrieve the client secret
+  async function initialize() {
+    const clientSecret = "<%= @client_secret %>";
+
+    // Initialize Checkout
+    const checkout = await stripe.initEmbeddedCheckout({
+      clientSecret,
+    });
+
+    // Mount Checkout
+    checkout.mount('#checkout');
+  }
+</script>

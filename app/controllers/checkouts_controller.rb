@@ -27,7 +27,6 @@ class CheckoutsController < ApplicationController
 
     begin
       checkout_session = Stripe::Checkout::Session.create({
-        payment_method_types: [ "card" ],
         line_items: [ {
           price_data: {
             currency: Payment::REGISTRATION_CURRENCY,
@@ -40,18 +39,19 @@ class CheckoutsController < ApplicationController
           quantity: 1
         } ],
         mode: "payment",
-        success_url: checkout_success_url + "?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: checkout_cancel_url,
+        ui_mode: "embedded",
+        return_url: checkout_success_url + "?session_id={CHECKOUT_SESSION_ID}",
         metadata: {
           email: registration_params[:email],
           username: registration_params[:username]
         }
       })
 
-      redirect_to checkout_session.url, allow_other_host: true
+      @client_secret = checkout_session.client_secret
+      render :pay
     rescue Stripe::StripeError => e
       Rails.logger.error "Stripe error: #{e.message}"
-      flash[:alert] = "Payment processing error. Please try again."
+      flash[:alert] = "Payment processing error: #{e.message}"
       render :new, status: :unprocessable_entity
     end
   end

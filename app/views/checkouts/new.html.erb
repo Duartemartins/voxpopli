@@ -4,7 +4,7 @@
   </h2>
   <p class="font-mono text-xs text-ash mb-8 uppercase tracking-widest">Create your account and pay $5 to join.</p>
 
-  <%= form_with url: checkout_path, method: :post, scope: :user, class: 'space-y-6' do |f| %>
+  <%= form_with url: checkout_path, method: :post, scope: :user, class: 'space-y-6', data: { turbo: false } do |f| %>
     <div>
       <%= f.label :username, "IDENTITY_HANDLE // USERNAME", class: 'block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest' %>
       <%= f.text_field :username, autofocus: true, autocomplete: "username", 

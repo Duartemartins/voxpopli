@@ -33,9 +33,12 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test "create with valid data redirects to stripe" do
-    mock_session = OpenStruct.new(url: "https://stripe.com/checkout")
-
+  test "create with valid data renders pay view with client secret" do
+    mock_session = OpenStruct.new(
+      client_secret: "cs_test_secret_123",
+      url: "https://stripe.com/checkout" # Still needed for some internal logic if any, but mainly client_secret
+    )
+    
     Stripe::Checkout::Session.stub :create, mock_session do
       post checkout_path, params: {
         user: {
@@ -45,8 +48,11 @@ class CheckoutsControllerTest < ActionDispatch::IntegrationTest
           password_confirmation: "password123"
         }
       }
-      assert_redirected_to "https://stripe.com/checkout"
+      assert_response :success
+      # assert_template :pay # Removed as it requires a separate gem
       assert_equal "newcheckoutuser", session[:pending_registration]["username"]
+      # Verify client_secret is assigned to instance variable
+      assert_equal "cs_test_secret_123", @controller.instance_variable_get(:@client_secret)
     end
   end
 
