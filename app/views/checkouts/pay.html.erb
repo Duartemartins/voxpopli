@@ -13,7 +13,7 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script nonce="<%= content_security_policy_nonce %>">
   // Initialize Stripe.js
-  const stripe = Stripe('<%= Rails.application.credentials.dig(:stripe, :publishable_key) %>');
+  const stripe = Stripe('<%= Rails.application.config.stripe_publishable_key %>');
 
   initialize();
 
