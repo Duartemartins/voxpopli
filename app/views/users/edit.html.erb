@@ -1,60 +1,58 @@
-<div class="max-w-2xl mx-auto">
-  <div class="bg-white rounded-lg shadow p-6">
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h1>
+<div class="max-w-2xl mx-auto mt-12 border border-steel bg-carbon p-8 shadow-[8px_8px_0_0_#333]">
+  <h1 class="font-mono text-2xl font-bold text-white mb-8 tracking-tighter flex items-center gap-2">
+    <span class="text-acid-lime">>></span> EDIT_PROFILE_DATA
+  </h1>
 
-    <%= form_with model: @user, url: user_path(@user.username), method: :patch, class: "space-y-6" do |form| %>
-      <% if @user.errors.any? %>
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h2 class="text-red-800 font-medium mb-2">
-            <%= pluralize(@user.errors.count, "error") %> prevented your profile from being saved:
-          </h2>
-          <ul class="list-disc list-inside text-red-700 text-sm">
-            <% @user.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
-
-      <div>
-        <%= form.label :display_name, class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= form.text_field :display_name, 
-            class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003399] focus:border-[#003399]",
-            placeholder: "Your display name" %>
-        <p class="mt-1 text-sm text-gray-500">This is how your name will appear on your profile</p>
-      </div>
-
-      <div>
-        <%= form.label :bio, class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= form.text_area :bio, 
-            rows: 4,
-            class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003399] focus:border-[#003399]",
-            placeholder: "Tell us about yourself" %>
-        <p class="mt-1 text-sm text-gray-500">A short bio about yourself (optional)</p>
-      </div>
-
-      <div>
-        <%= form.label :website, class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= form.url_field :website, 
-            class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003399] focus:border-[#003399]",
-            placeholder: "https://yourwebsite.com" %>
-        <p class="mt-1 text-sm text-gray-500">Your personal website or portfolio (optional)</p>
-      </div>
-
-      <div>
-        <%= form.label :avatar_url, "Avatar URL", class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= form.url_field :avatar_url, 
-            class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003399] focus:border-[#003399]",
-            placeholder: "https://example.com/avatar.jpg" %>
-        <p class="mt-1 text-sm text-gray-500">URL to your profile picture (optional)</p>
-      </div>
-
-      <div class="flex items-center justify-between pt-4">
-        <%= link_to "Cancel", user_path(@user.username), 
-            class: "px-4 py-2 text-gray-700 hover:text-gray-900" %>
-        <%= form.submit "Save Changes", 
-            class: "px-6 py-2 bg-[#003399] text-white rounded-lg hover:bg-[#002266] cursor-pointer" %>
+  <%= form_with model: @user, url: user_path(@user.username), method: :patch, class: "space-y-8" do |form| %>
+    <% if @user.errors.any? %>
+      <div class="border border-acid-pink bg-acid-pink/10 p-4 font-mono text-sm text-acid-pink">
+        <h2 class="font-bold mb-2 uppercase tracking-widest">
+          >> ERROR_LOG: <%= pluralize(@user.errors.count, "ISSUE") %> DETECTED
+        </h2>
+        <ul class="list-disc list-inside">
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
       </div>
     <% end %>
-  </div>
+
+    <div>
+      <%= form.label :display_name, "DISPLAY_NAME // ALIAS", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <%= form.text_field :display_name, 
+          class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel",
+          placeholder: "enter_alias..." %>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">Visible public identifier.</p>
+    </div>
+
+    <div>
+      <%= form.label :bio, "BIO_DATA // DESCRIPTION", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <%= form.text_area :bio, 
+          rows: 4,
+          class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel resize-none",
+          placeholder: "enter_bio_data..." %>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">Brief operative summary.</p>
+    </div>
+
+    <div>
+      <%= form.label :website, "NETWORK_LINK // WEBSITE", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <%= form.url_field :website, 
+          class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel",
+          placeholder: "https://..." %>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">External network coordinate.</p>
+    </div>
+
+    <div>
+      <%= form.label :avatar_url, "IMG_SOURCE // AVATAR_URL", class: "block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest" %>
+      <%= form.url_field :avatar_url, 
+          class: "w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel",
+          placeholder: "https://..." %>
+      <p class="mt-1 font-mono text-[10px] text-ash uppercase">Profile image resource locator.</p>
+    </div>
+
+    <div class="pt-4 border-t border-steel flex items-center justify-end gap-4">
+      <%= link_to "CANCEL_EDIT", user_path(@user.username), class: "font-mono text-xs text-ash hover:text-white uppercase tracking-widest" %>
+      <%= form.submit "SAVE_PROFILE_DATA", class: "bg-acid-lime text-obsidian font-mono font-bold uppercase tracking-widest px-6 py-3 hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none" %>
+    </div>
+  <% end %>
 </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="dark">
   <head>
     <title><%= content_for(:title) || "Voxpopli" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -17,34 +17,62 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-50 min-h-screen">
-    <nav class="bg-white border-b border-gray-200">
-      <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-        <%= link_to 'voxpopli', root_path, class: 'text-xl font-bold text-[#003399]' %>
-        <div class="flex items-center gap-4">
-          <% if user_signed_in? %>
-            <%= link_to current_user.username, user_path(current_user), class: 'text-gray-600 hover:text-gray-900' %>
-            <%= link_to 'Settings', settings_account_path, class: 'text-gray-600 hover:text-gray-900' %>
-            <%= button_to 'Sign out', destroy_user_session_path, method: :delete, class: 'text-gray-600 hover:text-gray-900' %>
-          <% else %>
-            <%= link_to 'Sign in', new_user_session_path, class: 'text-gray-600 hover:text-gray-900' %>
-            <%= link_to 'Sign up', join_path, class: 'bg-[#003399] text-white px-4 py-2 rounded-lg hover:bg-[#002266]' %>
+  <body class="bg-obsidian font-sans text-white antialiased selection:bg-acid-lime selection:text-obsidian scanlines min-h-screen">
+    <nav class="bg-obsidian border-b border-steel sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-stretch min-h-16">
+        <div class="flex items-center justify-between border-b md:border-b-0 border-steel">
+          <%= link_to root_path, class: "flex items-center px-6 py-4 md:py-0 border-r border-steel font-mono font-bold text-xl tracking-tighter text-white hover:bg-carbon hover:text-acid-lime transition-colors duration-0 h-full" do %>
+            VOX<span class="text-acid-lime">_POPLI</span>
           <% end %>
+          
+          <div class="flex items-center px-6 md:hidden">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-acid-lime rounded-full animate-pulse shadow-[0_0_8px_#CCFF00]"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex-1 flex flex-wrap items-center justify-center md:justify-end px-6 gap-4 md:gap-8 py-4 md:py-0">
+          <% if user_signed_in? %>
+            <%= link_to "[ FEED ]", root_path, class: "font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest transition-colors duration-0" %>
+            <%= link_to "[ PROFILE ]", user_path(current_user), class: "font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest transition-colors duration-0" %>
+            <%= link_to "[ SETTINGS ]", settings_account_path, class: "font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest transition-colors duration-0" %>
+            <%= button_to "[ LOGOUT ]", destroy_user_session_path, method: :delete, class: "font-mono text-xs text-ash hover:text-acid-pink uppercase tracking-widest transition-colors duration-0 bg-transparent border-none cursor-pointer" %>
+          <% else %>
+            <%= link_to "[ LOGIN ]", new_user_session_path, class: "font-mono text-xs text-ash hover:text-acid-cyan uppercase tracking-widest transition-colors duration-0" %>
+            <%= link_to "[ REGISTER ]", join_path, class: "font-mono text-xs text-acid-lime hover:text-white uppercase tracking-widest transition-colors duration-0" %>
+          <% end %>
+        </div>
+        
+        <div class="hidden md:flex items-center px-6 border-l border-steel">
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-[10px] text-acid-lime">ONLINE</span>
+            <div class="w-2 h-2 bg-acid-lime rounded-full animate-pulse shadow-[0_0_8px_#CCFF00]"></div>
+          </div>
         </div>
       </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-4 py-6">
+    <main class="max-w-4xl mx-auto px-4 py-12">
       <% if notice %>
-        <div class="mb-4 p-3 bg-green-100 text-green-800 rounded"><%= notice %></div>
+        <div class="mb-8 border border-acid-lime bg-acid-lime/10 p-4 font-mono text-sm text-acid-lime">
+          <span class="font-bold">>>> SYSTEM_NOTICE:</span> <%= notice %>
+        </div>
       <% end %>
       <% if alert %>
-        <div class="mb-4 p-3 bg-red-100 text-red-800 rounded"><%= alert %></div>
+        <div class="mb-8 border border-acid-pink bg-acid-pink/10 p-4 font-mono text-sm text-acid-pink">
+          <span class="font-bold">>>> SYSTEM_ALERT:</span> <%= alert %>
+        </div>
       <% end %>
       <%= yield %>
     </main>

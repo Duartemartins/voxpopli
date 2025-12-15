@@ -1,91 +1,90 @@
-<div class="max-w-2xl space-y-6">
-  <h1 class="text-2xl font-bold">API Keys</h1>
+<div class="max-w-2xl space-y-8">
+  <h1 class="font-mono text-2xl font-bold text-white tracking-tighter flex items-center gap-2">
+    <span class="text-acid-lime">>></span> API_ACCESS_CONTROL
+  </h1>
 
   <% if flash[:api_key] %>
-    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-      <h3 class="font-medium text-green-800">Your new API key</h3>
-      <p class="mt-1 text-sm text-green-700">Copy this key now. You won't be able to see it again!</p>
-      <div class="mt-2 flex items-center gap-2">
-        <code id="api-key-value" class="flex-1 bg-green-100 px-3 py-2 rounded font-mono text-sm break-all"><%= flash[:api_key] %></code>
-        <button type="button" onclick="copyApiKey()" class="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
-          Copy
+    <div class="border border-acid-lime bg-acid-lime/10 p-6 shadow-[0_0_15px_rgba(204,255,0,0.2)]">
+      <h3 class="font-mono font-bold text-acid-lime mb-2 uppercase tracking-widest">>> NEW_KEY_GENERATED</h3>
+      <p class="font-mono text-xs text-ash mb-4">Secure this credential immediately. It will not be displayed again.</p>
+      <div class="flex items-center gap-4">
+        <code id="api-key-value" class="flex-1 bg-obsidian border border-steel px-4 py-3 font-mono text-sm text-acid-lime break-all"><%= flash[:api_key] %></code>
+        <button type="button" 
+                data-controller="clipboard" 
+                data-clipboard-content-value="<%= flash[:api_key] %>"
+                data-action="click->clipboard#copy"
+                class="px-4 py-3 bg-acid-lime text-obsidian font-mono font-bold uppercase tracking-widest hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none text-xs">
+          COPY
         </button>
       </div>
     </div>
   <% end %>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <h2 class="text-lg font-medium">Create New API Key</h2>
-    <p class="mt-1 text-sm text-gray-600">API keys allow you to access the Voxpopli API programmatically.</p>
+  <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
+    <h2 class="font-mono text-lg font-bold text-white mb-2">GENERATE_NEW_KEY</h2>
+    <p class="font-mono text-xs text-ash mb-6">Create programmatic access token for external applications.</p>
 
     <%= form_with model: [:settings, ApiKey.new], class: "mt-4" do |f| %>
-      <div class="flex gap-3">
+      <div class="flex gap-4">
         <%= f.text_field :name, 
-            placeholder: "Key name (e.g., My App)", 
+            placeholder: "ENTER_APP_IDENTIFIER...", 
             required: true,
-            class: "flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
-        <%= f.submit "Create API Key", 
-            class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer" %>
+            class: "flex-1 bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel" %>
+        <%= f.submit "GENERATE_KEY", 
+            class: "px-6 py-3 bg-acid-cyan text-obsidian font-mono font-bold uppercase tracking-widest hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none text-xs" %>
       </div>
     <% end %>
   </div>
 
   <% if @api_keys.any? %>
-    <div class="bg-white rounded-lg shadow">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-medium">Your API Keys</h2>
+    <div class="bg-carbon border border-steel shadow-[4px_4px_0_0_#333]">
+      <div class="px-6 py-4 border-b border-steel bg-obsidian/50">
+        <h2 class="font-mono text-sm font-bold text-white uppercase tracking-widest">ACTIVE_CREDENTIALS</h2>
       </div>
-      <ul class="divide-y divide-gray-200">
+      <ul class="divide-y divide-steel">
         <% @api_keys.each do |api_key| %>
-          <li class="px-6 py-4 flex items-center justify-between">
+          <li class="px-6 py-4 flex items-center justify-between hover:bg-obsidian/30 transition-colors">
             <div>
-              <p class="font-medium"><%= api_key.name %></p>
-              <p class="text-sm text-gray-500">
-                <code class="bg-gray-100 px-1 rounded"><%= api_key.key_prefix %>...</code>
-                · Created <%= time_ago_in_words(api_key.created_at) %> ago
+              <p class="font-mono text-white font-bold mb-1"><%= api_key.name %></p>
+              <p class="font-mono text-xs text-ash">
+                <code class="text-acid-lime"><%= api_key.key_prefix %>...</code>
+                <span class="text-steel mx-2">|</span>
+                CREATED: <%= time_ago_in_words(api_key.created_at).upcase %>_AGO
+                <span class="text-steel mx-2">|</span>
                 <% if api_key.last_used_at %>
-                  · Last used <%= time_ago_in_words(api_key.last_used_at) %> ago
+                  LAST_USED: <%= time_ago_in_words(api_key.last_used_at).upcase %>_AGO
                 <% else %>
-                  · Never used
+                  STATUS: UNUSED
                 <% end %>
               </p>
             </div>
-            <%= button_to "Revoke", settings_api_key_path(api_key), 
+            <%= button_to "[ REVOKE ]", settings_api_key_path(api_key), 
                 method: :delete,
-                class: "text-red-600 hover:text-red-800 text-sm font-medium",
-                data: { turbo_confirm: "Are you sure you want to revoke this API key?" } %>
+                class: "font-mono text-xs text-acid-pink hover:text-white uppercase tracking-widest bg-transparent border border-acid-pink px-3 py-2 hover:bg-acid-pink transition-all cursor-pointer",
+                data: { turbo_confirm: "CONFIRM_REVOCATION?" } %>
           </li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div class="bg-gray-50 rounded-lg p-6">
-    <h2 class="text-lg font-medium">API Documentation</h2>
-    <p class="mt-1 text-sm text-gray-600">Use your API key in the Authorization header:</p>
-    <pre class="mt-3 bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm">curl -H "Authorization: Bearer YOUR_API_KEY" \
+  <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
+    <h2 class="font-mono text-lg font-bold text-white mb-2">API_DOCUMENTATION</h2>
+    <p class="font-mono text-xs text-ash mb-4">Use your API key in the Authorization header:</p>
+    <pre class="bg-obsidian border border-steel text-acid-lime p-4 overflow-x-auto font-mono text-sm">curl -H "Authorization: Bearer YOUR_API_KEY" \
   <%= request.base_url %>/api/v1/me</pre>
     
-    <h3 class="mt-4 font-medium">Available Endpoints</h3>
-    <ul class="mt-2 text-sm text-gray-600 space-y-1">
-      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/me</code> - Your profile</li>
-      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/posts</code> - List posts</li>
-      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/posts/:id</code> - Get a post</li>
-      <li><code class="bg-gray-200 px-1 rounded">POST /api/v1/posts</code> - Create a post</li>
-      <li><code class="bg-gray-200 px-1 rounded">DELETE /api/v1/posts/:id</code> - Delete your post</li>
-      <li><code class="bg-gray-200 px-1 rounded">POST /api/v1/posts/:post_id/vote</code> - Vote on a post</li>
-      <li><code class="bg-gray-200 px-1 rounded">DELETE /api/v1/posts/:post_id/vote</code> - Remove vote</li>
-      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/themes</code> - List themes</li>
-      <li><code class="bg-gray-200 px-1 rounded">GET /api/v1/themes/:id</code> - Get a theme</li>
+    <h3 class="font-mono text-sm font-bold text-white mt-6 mb-3 uppercase tracking-widest">AVAILABLE_ENDPOINTS</h3>
+    <ul class="font-mono text-xs text-ash space-y-2">
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">GET /api/v1/me</code> <span class="text-steel">-</span> Your profile</li>
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">GET /api/v1/posts</code> <span class="text-steel">-</span> List posts</li>
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">GET /api/v1/posts/:id</code> <span class="text-steel">-</span> Get a post</li>
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">POST /api/v1/posts</code> <span class="text-steel">-</span> Create a post</li>
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">DELETE /api/v1/posts/:id</code> <span class="text-steel">-</span> Delete your post</li>
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">POST /api/v1/posts/:post_id/vote</code> <span class="text-steel">-</span> Vote on a post</li>
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">DELETE /api/v1/posts/:post_id/vote</code> <span class="text-steel">-</span> Remove vote</li>
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">GET /api/v1/themes</code> <span class="text-steel">-</span> List themes</li>
+      <li><code class="bg-obsidian border border-steel px-2 py-1 text-acid-cyan">GET /api/v1/themes/:id</code> <span class="text-steel">-</span> Get a theme</li>
     </ul>
   </div>
 </div>
-
-<script>
-function copyApiKey() {
-  const key = document.getElementById('api-key-value').textContent;
-  navigator.clipboard.writeText(key).then(() => {
-    alert('API key copied to clipboard!');
-  });
-}
-</script>

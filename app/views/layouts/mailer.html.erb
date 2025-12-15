@@ -3,11 +3,60 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style>
-      /* Email styles need to be inline */
+      body {
+        background-color: #050505;
+        color: #ffffff;
+        font-family: 'Courier New', Courier, monospace;
+      }
+      a {
+        color: #CCFF00;
+        text-decoration: none;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #333333;
+        background-color: #111111;
+      }
+      .header {
+        border-bottom: 1px solid #333333;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        font-size: 24px;
+      }
+      .footer {
+        border-top: 1px solid #333333;
+        padding-top: 20px;
+        margin-top: 20px;
+        font-size: 12px;
+        color: #666666;
+        text-align: center;
+      }
+      .button {
+        display: inline-block;
+        background-color: #CCFF00;
+        color: #050505;
+        padding: 10px 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-top: 20px;
+      }
     </style>
   </head>
 
   <body>
-    <%= yield %>
+    <div class="container">
+      <div class="header">
+        VOX<span style="color: #CCFF00;">_POPULI</span>
+      </div>
+      
+      <%= yield %>
+      
+      <div class="footer">
+        >> END_TRANSMISSION
+      </div>
+    </div>
   </body>
 </html>

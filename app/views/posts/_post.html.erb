@@ -1,48 +1,71 @@
-<div id="<%= dom_id(post) %>" class="bg-white rounded-lg shadow p-4">
-  <div class="flex gap-4">
-    <div class="flex-shrink-0">
-      <%= render 'posts/vote_buttons', post: post %>
-    </div>
-    
-    <div class="flex-shrink-0">
+<article id="<%= dom_id(post) %>" class="bg-carbon border border-steel p-0 relative group hover:border-ash transition-colors duration-300">
+  <!-- Corner accents on hover -->
+  <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-white opacity-0 group-hover:opacity-100 transition-opacity duration-0"></div>
+  <div class="absolute top-0 right-0 w-2 h-2 border-t border-r border-white opacity-0 group-hover:opacity-100 transition-opacity duration-0"></div>
+  <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white opacity-0 group-hover:opacity-100 transition-opacity duration-0"></div>
+  <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white opacity-0 group-hover:opacity-100 transition-opacity duration-0"></div>
+
+  <header class="flex items-center justify-between p-3 border-b border-steel bg-obsidian/50">
+    <div class="flex items-center gap-3">
       <%= link_to user_path(post.user) do %>
         <%= avatar_for(post.user, size: :small) %>
       <% end %>
-    </div>
-    
-    <div class="flex-1 min-w-0">
-      <div class="flex items-center gap-2 text-sm text-gray-500">
-        <%= link_to post.user.username, user_path(post.user), class: 'font-medium text-gray-900 hover:underline' %>
-        <% if post.theme %>
-          <span class="px-2 py-0.5 rounded text-xs" style="background-color: <%= post.theme.color %>20; color: <%= post.theme.color %>">
-            <%= post.theme.name %>
-          </span>
-        <% end %>
-        <span>·</span>
-        <span><%= time_ago_in_words(post.created_at) %> ago</span>
-      </div>
-      
-      <div class="mt-2 text-gray-900 whitespace-pre-wrap"><%= post.body %></div>
-      
-      <% if post.image.attached? %>
-        <div class="mt-3">
-          <%= image_tag post.image, 
-              class: 'rounded-lg max-w-full max-h-96 object-contain', 
-              alt: 'Post image' %>
-        </div>
+      <%= link_to user_path(post.user), class: 'font-mono text-acid-lime text-sm tracking-tight hover:text-white transition-colors' do %>
+        @<%= post.user.username.upcase %>
       <% end %>
-      
-      <div class="mt-3 flex items-center gap-4 text-sm text-gray-500">
-        <%= link_to post_path(post), class: 'hover:text-gray-700' do %>
-          <%= post.replies_count %> replies
-        <% end %>
-        
-        <% if user_signed_in? && post.user == current_user %>
-          <%= button_to 'Delete', post_path(post), method: :delete, 
-              class: 'text-red-500 hover:text-red-700',
-              data: { turbo_confirm: 'Are you sure?' } %>
-        <% end %>
-      </div>
+      <% if post.theme %>
+        <span class="inline-flex items-center border border-steel px-1.5 py-0.5 bg-obsidian">
+          <span class="w-1.5 h-1.5 mr-1.5" style="background-color: <%= post.theme.color %>"></span>
+          <span class="font-mono text-[10px] text-ash uppercase"><%= post.theme.name.upcase %></span>
+        </span>
+      <% end %>
     </div>
+    <span class="font-mono text-ash text-xs uppercase">T-<%= time_ago_in_words(post.created_at).upcase.gsub(' ', '_') %></span>
+  </header>
+  
+  <div class="p-6">
+    <p class="text-white font-sans text-lg leading-relaxed whitespace-pre-wrap"><%= post.body %></p>
+    
+    <% if post.image.attached? %>
+      <div class="mt-4 group relative">
+        <%= image_tag post.image, 
+            class: 'border border-steel max-w-full max-h-96 object-contain bg-obsidian', 
+            alt: 'Post image' %>
+        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <%= link_to rails_blob_path(post.image, disposition: "attachment"),
+                class: 'bg-obsidian/90 border border-steel text-acid-cyan hover:text-acid-lime hover:border-acid-lime p-2 flex items-center gap-1 font-mono text-xs transition-colors' do %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            DL
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
-</div>
+
+  <footer class="border-t border-steel flex bg-obsidian/30 divide-x divide-steel">
+    <%= render 'posts/vote_buttons', post: post %>
+    
+    <%= link_to post_path(post), class: 'flex-1 py-3 hover:bg-steel/20 text-ash hover:text-white font-mono text-xs transition-all duration-0 flex items-center justify-center' do %>
+      REPLY_THREAD (<%= post.replies_count %>)
+    <% end %>
+    
+    <% if user_signed_in? && post.user == current_user %>
+      <%= button_to post_path(post), method: :delete, 
+          class: 'flex-1 py-3 hover:bg-steel/20 text-ash hover:text-acid-pink font-mono text-xs transition-all duration-0 flex items-center justify-center',
+          data: { turbo_confirm: 'CONFIRM_DELETION?' },
+          form: { class: 'flex-1 contents' } do %>
+        DELETE
+      <% end %>
+    <% else %>
+      <button type="button" 
+              data-controller="clipboard"
+              data-clipboard-content-value="<%= post_url(post) %>"
+              data-action="click->clipboard#copy"
+              class="flex-1 py-3 hover:bg-steel/20 text-ash hover:text-acid-cyan font-mono text-xs transition-all duration-0">
+        SHARE_DATA
+      </button>
+    <% end %>
+  </footer>
+</article>

@@ -1,31 +1,36 @@
-<div class="space-y-6">
+<div class="space-y-8">
   <% if user_signed_in? %>
     <%= render 'posts/form' %>
   <% end %>
 
-  <div class="flex gap-4 border-b border-gray-200 pb-2">
-    <%= link_to 'New', timeline_path(view: 'new', theme: params[:theme]), 
-        class: "pb-2 border-b-2 #{@view == 'new' ? 'border-[#003399] text-[#003399]' : 'border-transparent text-gray-500 hover:text-gray-700'}" %>
-    <%= link_to 'Top', timeline_path(view: 'voted', theme: params[:theme]),
-        class: "pb-2 border-b-2 #{@view == 'voted' ? 'border-[#003399] text-[#003399]' : 'border-transparent text-gray-500 hover:text-gray-700'}" %>
+  <div class="flex gap-6 border-b border-steel pb-2">
+    <%= link_to timeline_path(view: 'new', theme: params[:theme]), 
+        class: "font-mono text-xs uppercase tracking-widest pb-2 border-b-2 transition-all #{@view == 'new' ? 'border-acid-lime text-acid-lime' : 'border-transparent text-ash hover:text-white'}" do %>
+      [ NEW_TRANSMISSIONS ]
+    <% end %>
+    
+    <%= link_to timeline_path(view: 'voted', theme: params[:theme]),
+        class: "font-mono text-xs uppercase tracking-widest pb-2 border-b-2 transition-all #{@view == 'voted' ? 'border-acid-lime text-acid-lime' : 'border-transparent text-ash hover:text-white'}" do %>
+      [ TOP_RATED ]
+    <% end %>
   </div>
 
-  <div id="posts" class="space-y-4">
+  <div id="posts" class="space-y-6">
     <%= render @posts %>
   </div>
 
   <% if @posts.empty? %>
-    <div class="text-center py-12 text-gray-500">
-      <p class="text-lg">No posts yet</p>
+    <div class="text-center py-16 border border-dashed border-steel bg-carbon/50">
+      <p class="font-mono text-lg text-white mb-2">>> NO_DATA_FOUND</p>
       <% if user_signed_in? %>
-        <p class="mt-2">Be the first to share what you're building!</p>
+        <p class="font-mono text-sm text-ash">Initiate first transmission sequence.</p>
       <% else %>
-        <p class="mt-2">Sign in to see and share posts.</p>
+        <p class="font-mono text-sm text-ash">Authentication required to view data stream.</p>
       <% end %>
     </div>
   <% end %>
 
-  <div class="mt-6">
+  <div class="mt-8 flex justify-center">
     <%= paginate @posts %>
   </div>
 </div>

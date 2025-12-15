@@ -1,11 +1,15 @@
 <%= turbo_stream.replace "follow_#{@user.id}" do %>
   <div id="follow_<%= @user.id %>">
     <% if current_user.following?(@user) %>
-      <%= button_to 'Unfollow', user_follow_path(@user), method: :delete,
-          class: 'px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50' %>
+      <%= button_to user_follow_path(@user), method: :delete,
+          class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 border border-acid-pink text-acid-pink hover:bg-acid-pink hover:text-obsidian transition-all bg-transparent cursor-pointer' do %>
+        [ UNFOLLOW ]
+      <% end %>
     <% else %>
-      <%= button_to 'Follow', user_follow_path(@user), method: :post,
-          class: 'px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700' %>
+      <%= button_to user_follow_path(@user), method: :post,
+          class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 bg-acid-lime text-obsidian hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all border-none cursor-pointer' do %>
+        [ FOLLOW_USER ]
+      <% end %>
     <% end %>
   </div>
 <% end %>

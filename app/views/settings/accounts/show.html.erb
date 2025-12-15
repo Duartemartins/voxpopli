@@ -1,32 +1,36 @@
-<div class="max-w-xl space-y-6">
-  <h1 class="text-2xl font-bold">Account Settings</h1>
+<div class="max-w-xl space-y-8">
+  <h1 class="font-mono text-2xl font-bold text-white tracking-tighter flex items-center gap-2">
+    <span class="text-acid-lime">>></span> SYSTEM_CONFIG
+  </h1>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <h2 class="text-lg font-medium">Invite Codes</h2>
-    <p class="mt-2 text-gray-600">Share these codes with friends to invite them to Voxpopli. Each code can only be used once.</p>
+  <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
+    <h2 class="font-mono text-lg font-bold text-white mb-2">INVITE_CODES</h2>
+    <p class="font-mono text-xs text-ash mb-4">Generate access keys for new operatives. Single use only.</p>
     
     <div class="mt-4 space-y-3">
       <% current_user.ensure_invite_codes!.each do |invite| %>
-        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div class="flex items-center justify-between p-3 bg-obsidian border border-steel">
           <div class="flex items-center gap-3">
-            <code class="font-mono text-sm <%= invite.used_at? ? 'text-gray-400 line-through' : 'text-gray-900' %>">
+            <code class="font-mono text-sm <%= invite.used_at? ? 'text-steel line-through' : 'text-acid-lime' %>">
               <%= invite.code %>
             </code>
             <% if invite.used_at? %>
-              <span class="text-xs text-gray-500">
-                Used by <%= invite.invitee&.username || 'unknown' %> on <%= invite.used_at.strftime('%b %d, %Y') %>
+              <span class="font-mono text-[10px] text-ash uppercase">
+                CLAIMED_BY: <%= invite.invitee&.username || 'UNKNOWN' %>
               </span>
             <% end %>
           </div>
           <div class="flex items-center gap-2">
             <% if invite.used_at? %>
-              <span class="px-2 py-1 text-xs bg-gray-200 text-gray-600 rounded">Used</span>
+              <span class="px-2 py-1 text-[10px] font-mono uppercase bg-steel/20 text-steel border border-steel">DEPLETED</span>
             <% else %>
-              <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">Available</span>
+              <span class="px-2 py-1 text-[10px] font-mono uppercase bg-acid-lime/10 text-acid-lime border border-acid-lime">ACTIVE</span>
               <button type="button" 
-                      onclick="navigator.clipboard.writeText('<%= invite.code %>'); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 2000)"
-                      class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition">
-                Copy
+                      data-controller="clipboard"
+                      data-clipboard-content-value="<%= invite.code %>"
+                      data-action="click->clipboard#copy"
+                      class="px-2 py-1 text-[10px] font-mono uppercase bg-acid-cyan/10 text-acid-cyan border border-acid-cyan hover:bg-acid-cyan hover:text-obsidian transition-colors cursor-pointer">
+                COPY
               </button>
             <% end %>
           </div>
@@ -35,20 +39,24 @@
     </div>
   </div>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <h2 class="text-lg font-medium">API Access</h2>
-    <p class="mt-2 text-gray-600">Manage your API keys to access Voxpopli programmatically.</p>
+  <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
+    <h2 class="font-mono text-lg font-bold text-white mb-2">API_ACCESS</h2>
+    <p class="font-mono text-xs text-ash mb-4">Manage programmatic access credentials.</p>
     
-    <%= link_to 'Manage API Keys', settings_api_keys_path,
-        class: 'mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700' %>
+    <%= link_to settings_api_keys_path,
+        class: 'mt-2 inline-block font-mono text-xs uppercase tracking-widest px-4 py-2 bg-steel/20 text-white border border-steel hover:bg-acid-cyan hover:text-obsidian hover:border-acid-cyan transition-all' do %>
+      [ MANAGE_KEYS ]
+    <% end %>
   </div>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <h2 class="text-lg font-medium text-red-600">Danger Zone</h2>
-    <p class="mt-2 text-gray-600">Once you delete your account, there is no going back. Please be certain.</p>
+  <div class="bg-carbon border border-acid-pink p-6 shadow-[4px_4px_0_0_#FF0099]">
+    <h2 class="font-mono text-lg font-bold text-acid-pink mb-2">DANGER_ZONE</h2>
+    <p class="font-mono text-xs text-ash mb-4">Irreversible system termination. Proceed with caution.</p>
     
-    <%= button_to 'Delete my account', settings_account_path, method: :delete,
-        class: 'mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700',
-        data: { turbo_confirm: 'Are you absolutely sure? This cannot be undone.' } %>
+    <%= button_to settings_account_path, method: :delete,
+        class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 bg-acid-pink text-obsidian hover:bg-white hover:text-acid-pink transition-all border-none cursor-pointer',
+        data: { turbo_confirm: 'CONFIRM_SYSTEM_TERMINATION?' } do %>
+      [ TERMINATE_ACCOUNT ]
+    <% end %>
   </div>
 </div>

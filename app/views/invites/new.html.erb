@@ -1,28 +1,30 @@
-<div class="max-w-md mx-auto">
-  <h2 class="text-2xl font-bold mb-2">Join Voxpopli</h2>
-  <p class="text-gray-600 mb-6">Enter your invite code to create an account.</p>
+<div class="max-w-md mx-auto mt-12 border border-steel bg-carbon p-8 shadow-[8px_8px_0_0_#333]">
+  <h2 class="font-mono text-2xl font-bold text-white mb-2 tracking-tighter flex items-center gap-2">
+    <span class="text-acid-lime">>></span> INITIALIZE_SEQUENCE
+  </h2>
+  <p class="font-mono text-xs text-ash mb-8 uppercase tracking-widest">Enter access key to proceed.</p>
 
-  <%= form_with url: verify_invite_path, method: :post, class: 'space-y-4' do |f| %>
+  <%= form_with url: verify_invite_path, method: :post, class: 'space-y-6' do |f| %>
     <div>
-      <%= label_tag :code, 'Invite Code', class: 'block text-sm font-medium text-gray-700' %>
+      <%= label_tag :code, 'ACCESS_KEY // INVITE_CODE', class: 'block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest' %>
       <%= text_field_tag :code, params[:code], 
           autofocus: true, 
           autocomplete: "off",
-          placeholder: "Enter your invite code",
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent uppercase' %>
+          placeholder: "ENTER_CODE...",
+          class: 'w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all uppercase placeholder-steel' %>
     </div>
 
     <div class="pt-4">
-      <%= submit_tag 'Continue', class: 'w-full bg-[#003399] text-white px-4 py-2 rounded-lg hover:bg-[#002266] cursor-pointer' %>
+      <%= submit_tag 'VERIFY_ACCESS', class: 'w-full bg-acid-lime text-obsidian font-mono font-bold uppercase tracking-widest py-3 hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none' %>
     </div>
   <% end %>
 
-  <div class="mt-6 text-center text-sm text-gray-500">
-    <p>Already have an account? <%= link_to 'Sign in', new_user_session_path, class: 'text-[#003399] hover:underline' %></p>
+  <div class="mt-8 pt-6 border-t border-steel text-center font-mono text-xs">
+    <p class="text-ash">EXISTING_OPERATIVE? <%= link_to 'INITIATE_LOGIN', new_user_session_path, class: 'text-acid-cyan hover:text-white uppercase tracking-widest ml-2' %></p>
   </div>
 
-  <div class="mt-8 p-4 bg-gray-100 rounded-lg text-sm text-gray-600">
-    <p class="font-medium text-gray-700 mb-2">Don't have an invite code?</p>
-    <p>Voxpopli is currently invite-only. Ask a member for an invite or follow us for announcements about open registration.</p>
+  <div class="mt-8 p-4 border border-dashed border-steel bg-obsidian text-xs font-mono text-ash">
+    <p class="font-bold text-white mb-2 uppercase tracking-widest">>> ACCESS_RESTRICTED</p>
+    <p>System is currently invite-only. Obtain access key from existing operative or await public transmission.</p>
   </div>
 </div>

@@ -1,31 +1,25 @@
-<div id="vote_buttons_<%= post.id %>" class="flex flex-col items-center gap-1">
+<div id="vote_buttons_<%= post.id %>" class="flex-1 flex items-stretch divide-x divide-steel">
   <% if user_signed_in? %>
-    <%= button_to post_vote_path(post, value: 1), method: :post, class: 'text-gray-400 hover:text-green-600' do %>
-      <svg class="w-5 h-5 <%= 'text-green-600' if post.votes.find_by(user: current_user)&.value == 1 %>" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
-      </svg>
+    <%= button_to post_vote_path(post, value: 1), method: :post, 
+        class: "flex-1 hover:bg-steel/20 font-mono text-xs transition-all duration-0 flex items-center justify-center group/btn #{post.votes.find_by(user: current_user)&.value == 1 ? 'text-acid-lime' : 'text-ash hover:text-acid-lime'}",
+        form: { class: 'contents' } do %>
+      <span class="group-hover/btn:-translate-y-0.5 transition-transform duration-150">▲</span>
+    <% end %>
+    
+    <div class="px-3 flex items-center justify-center font-mono text-xs text-white bg-obsidian/50 min-w-[3ch]">
+      <%= post.score %>
+    </div>
+    
+    <%= button_to post_vote_path(post, value: -1), method: :post, 
+        class: "flex-1 hover:bg-steel/20 font-mono text-xs transition-all duration-0 flex items-center justify-center group/btn #{post.votes.find_by(user: current_user)&.value == -1 ? 'text-acid-pink' : 'text-ash hover:text-acid-pink'}",
+        form: { class: 'contents' } do %>
+      <span class="group-hover/btn:translate-y-0.5 transition-transform duration-150">▼</span>
     <% end %>
   <% else %>
-    <span class="text-gray-300">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
-      </svg>
-    </span>
-  <% end %>
-  
-  <span class="text-sm font-medium text-gray-700"><%= post.score %></span>
-  
-  <% if user_signed_in? %>
-    <%= button_to post_vote_path(post, value: -1), method: :post, class: 'text-gray-400 hover:text-red-600' do %>
-      <svg class="w-5 h-5 <%= 'text-red-600' if post.votes.find_by(user: current_user)&.value == -1 %>" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-      </svg>
-    <% end %>
-  <% else %>
-    <span class="text-gray-300">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-      </svg>
-    </span>
+    <div class="flex-1 py-3 text-ash font-mono text-xs flex items-center justify-center gap-3">
+      <span>▲</span>
+      <span class="text-white"><%= post.score %></span>
+      <span>▼</span>
+    </div>
   <% end %>
 </div>

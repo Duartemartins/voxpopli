@@ -1,21 +1,21 @@
-<div class="space-y-6">
-  <div class="bg-white rounded-lg shadow p-6">
+<div class="space-y-8">
+  <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
     <div class="flex items-start justify-between">
-      <div class="flex items-start gap-4">
+      <div class="flex items-start gap-6">
         <%= avatar_for(@user, size: :large) %>
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">
+          <h1 class="text-2xl font-mono font-bold text-white tracking-tighter">
             <%= @user.display_name || @user.username %>
           </h1>
-          <p class="text-gray-500">@<%= @user.username %></p>
+          <p class="font-mono text-sm text-acid-lime">@<%= @user.username %></p>
         <% if @user.bio.present? %>
-          <p class="mt-2 text-gray-700"><%= @user.bio %></p>
+          <p class="mt-4 font-sans text-white leading-relaxed max-w-lg"><%= @user.bio %></p>
         <% end %>
         <% if @user.website.present? %>
-          <p class="mt-1">
-            <span class="text-gray-500">🔗</span>
+          <p class="mt-2 font-mono text-xs">
+            <span class="text-steel">LINK //</span>
             <%= link_to @user.website.gsub(/^https?:\/\//, '').chomp('/'), @user.website, 
-                target: '_blank', rel: 'noopener', class: 'text-[#003399] hover:underline' %>
+                target: '_blank', rel: 'noopener', class: 'text-acid-cyan hover:text-white hover:underline' %>
           </p>
         <% end %>
         </div>
@@ -23,34 +23,42 @@
       
       <% if user_signed_in? %>
         <% if current_user == @user %>
-          <%= link_to 'Edit Profile', edit_user_path(@user.username),
-              class: 'px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50' %>
+          <%= link_to edit_user_path(@user.username),
+              class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 border border-steel text-ash hover:bg-acid-lime hover:text-obsidian hover:border-acid-lime transition-all' do %>
+            [ EDIT_PROFILE ]
+          <% end %>
         <% else %>
           <div id="follow_<%= @user.id %>">
             <% if current_user.following?(@user) %>
-              <%= button_to 'Unfollow', user_follow_path(@user), method: :delete,
-                  class: 'px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50' %>
+              <%= button_to user_follow_path(@user), method: :delete,
+                  class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 border border-acid-pink text-acid-pink hover:bg-acid-pink hover:text-obsidian transition-all bg-transparent cursor-pointer' do %>
+                [ UNFOLLOW ]
+              <% end %>
             <% else %>
-              <%= button_to 'Follow', user_follow_path(@user), method: :post,
-                  class: 'px-4 py-2 bg-[#003399] text-white rounded-lg hover:bg-[#002266]' %>
+              <%= button_to user_follow_path(@user), method: :post,
+                  class: 'font-mono text-xs uppercase tracking-widest px-4 py-2 bg-acid-lime text-obsidian hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all border-none cursor-pointer' do %>
+                [ FOLLOW_USER ]
+              <% end %>
             <% end %>
           </div>
         <% end %>
       <% end %>
     </div>
     
-    <div class="mt-4 flex gap-4 text-sm">
-      <span><strong><%= @user.posts_count %></strong> posts</span>
-      <span><strong><%= @user.followers_count %></strong> followers</span>
-      <span><strong><%= @user.following_count %></strong> following</span>
+    <div class="mt-6 flex gap-8 font-mono text-xs uppercase tracking-widest border-t border-steel pt-4">
+      <span class="text-ash"><strong class="text-white"><%= @user.posts_count %></strong> TRANSMISSIONS</span>
+      <span class="text-ash"><strong class="text-white"><%= @user.followers_count %></strong> SUBSCRIBERS</span>
+      <span class="text-ash"><strong class="text-white"><%= @user.following_count %></strong> TARGETS</span>
     </div>
   </div>
 
-  <div class="space-y-4">
+  <div class="space-y-6">
     <% if @posts.any? %>
       <%= render @posts %>
     <% else %>
-      <p class="text-center py-8 text-gray-500">No posts yet</p>
+      <div class="text-center py-16 border border-dashed border-steel bg-carbon/50">
+        <p class="font-mono text-sm text-ash">>> NO_TRANSMISSIONS_FOUND</p>
+      </div>
     <% end %>
   </div>
 

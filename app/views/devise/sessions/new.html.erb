@@ -1,32 +1,36 @@
-<div class="max-w-md mx-auto">
-  <h2 class="text-2xl font-bold mb-6">Sign in</h2>
+<div class="max-w-md mx-auto mt-12 border border-steel bg-carbon p-8 shadow-[8px_8px_0_0_#333]">
+  <h2 class="font-mono text-2xl font-bold text-white mb-8 tracking-tighter flex items-center gap-2">
+    <span class="text-acid-lime">>></span> ACCESS_TERMINAL
+  </h2>
 
-  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'space-y-4' }) do |f| %>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'space-y-6' }) do |f| %>
     <div>
-      <%= f.label :email, class: 'block text-sm font-medium text-gray-700' %>
+      <%= f.label :email, "USER_ID // EMAIL", class: 'block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest' %>
       <%= f.email_field :email, autofocus: true, autocomplete: "email",
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent' %>
+          class: 'w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel',
+          placeholder: "enter_email_address..." %>
     </div>
 
     <div>
-      <%= f.label :password, class: 'block text-sm font-medium text-gray-700' %>
+      <%= f.label :password, "ACCESS_CODE // PASSWORD", class: 'block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest' %>
       <%= f.password_field :password, autocomplete: "current-password",
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent' %>
+          class: 'w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel',
+          placeholder: "enter_password..." %>
     </div>
 
     <% if devise_mapping.rememberable? %>
-      <div class="flex items-center">
-        <%= f.check_box :remember_me, class: 'h-4 w-4 text-[#003399] border-gray-300 rounded' %>
-        <%= f.label :remember_me, class: 'ml-2 text-sm text-gray-700' %>
+      <div class="flex items-center gap-3">
+        <%= f.check_box :remember_me, class: 'appearance-none w-4 h-4 border border-acid-lime bg-obsidian checked:bg-acid-lime checked:shadow-[0_0_5px_#CCFF00] cursor-pointer' %>
+        <%= f.label :remember_me, "MAINTAIN_SESSION", class: 'font-mono text-xs text-ash uppercase tracking-widest cursor-pointer select-none' %>
       </div>
     <% end %>
 
     <div class="pt-4">
-      <%= f.submit "Sign in", class: 'w-full bg-[#003399] text-white px-4 py-2 rounded-lg hover:bg-[#002266] cursor-pointer' %>
+      <%= f.submit "INITIATE_LOGIN", class: 'w-full bg-acid-lime text-obsidian font-mono font-bold uppercase tracking-widest py-3 hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none' %>
     </div>
   <% end %>
 
-  <div class="mt-6 text-center text-sm text-gray-500">
+  <div class="mt-8 pt-6 border-t border-steel text-center">
     <%= render "devise/shared/links" %>
   </div>
 </div>

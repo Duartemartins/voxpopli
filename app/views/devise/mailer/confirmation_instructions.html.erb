@@ -1,5 +1,15 @@
-<p>Welcome <%= @email %>!</p>
+<h2 style="color: #CCFF00; font-family: 'Courier New', Courier, monospace; font-size: 18px; font-weight: bold; margin-bottom: 20px; letter-spacing: -1px;">
+  >> CONFIRMATION_REQUIRED
+</h2>
 
-<p>You can confirm your account email through the link below:</p>
+<p style="color: #E5E5E5; font-family: 'Courier New', Courier, monospace; font-size: 14px; margin-bottom: 15px;">
+  TARGET_ID: <%= @email %>
+</p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<p style="color: #A3A3A3; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin-bottom: 20px;">
+  New operative detected. Verification of communication channel required.
+</p>
+
+<div style="margin-bottom: 30px;">
+  <%= link_to '>> VERIFY_CREDENTIALS', confirmation_url(@resource, confirmation_token: @token), style: "background-color: #CCFF00; color: #000000; padding: 10px 20px; text-decoration: none; font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 12px; text-transform: uppercase; display: inline-block;" %>
+</div>

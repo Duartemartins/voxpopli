@@ -1,7 +1,15 @@
-<p>Hello <%= @resource.email %>!</p>
+<h2 style="color: #FF0099; font-family: 'Courier New', Courier, monospace; font-size: 18px; font-weight: bold; margin-bottom: 20px; letter-spacing: -1px;">
+  >> SECURITY_LOCKOUT
+</h2>
 
-<p>Your account has been locked due to an excessive number of unsuccessful sign in attempts.</p>
+<p style="color: #E5E5E5; font-family: 'Courier New', Courier, monospace; font-size: 14px; margin-bottom: 15px;">
+  TARGET_ID: <%= @resource.email %>
+</p>
 
-<p>Click the link below to unlock your account:</p>
+<p style="color: #A3A3A3; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin-bottom: 20px;">
+  Excessive failed access attempts detected. Account locked for security.
+</p>
 
-<p><%= link_to 'Unlock my account', unlock_url(@resource, unlock_token: @token) %></p>
+<div style="margin-bottom: 30px;">
+  <%= link_to '>> RESTORE_ACCESS', unlock_url(@resource, unlock_token: @token), style: "background-color: #FF0099; color: #000000; padding: 10px 20px; text-decoration: none; font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 12px; text-transform: uppercase; display: inline-block;" %>
+</div>

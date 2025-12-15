@@ -1,7 +1,9 @@
-<div class="max-w-md mx-auto">
-  <h2 class="text-2xl font-bold mb-6">Sign up</h2>
+<div class="max-w-md mx-auto mt-12 border border-steel bg-carbon p-8 shadow-[8px_8px_0_0_#333]">
+  <h2 class="font-mono text-2xl font-bold text-white mb-8 tracking-tighter flex items-center gap-2">
+    <span class="text-acid-lime">>></span> NEW_USER_REGISTRATION
+  </h2>
 
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'space-y-4' }) do |f| %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'space-y-6' }) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
 
     <%= f.hidden_field :invite_code, value: @invite&.code || params[:invite_code] %>
@@ -12,39 +14,43 @@
     </div>
 
     <div>
-      <%= f.label :username, class: 'block text-sm font-medium text-gray-700' %>
+      <%= f.label :username, "IDENTITY_HANDLE // USERNAME", class: 'block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest' %>
       <%= f.text_field :username, autofocus: true, autocomplete: "username", 
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent',
-          placeholder: 'Choose a username (lowercase, letters, numbers, underscores)' %>
+          class: 'w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel',
+          placeholder: 'enter_username...' %>
+      <p class="mt-1 font-mono text-[10px] text-ash">lowercase, letters, numbers, underscores only</p>
     </div>
 
     <div>
-      <%= f.label :email, class: 'block text-sm font-medium text-gray-700' %>
+      <%= f.label :email, "COMM_CHANNEL // EMAIL", class: 'block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest' %>
       <%= f.email_field :email, autocomplete: "email", 
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent' %>
+          class: 'w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel',
+          placeholder: 'enter_email...' %>
     </div>
 
     <div>
-      <%= f.label :password, class: 'block text-sm font-medium text-gray-700' %>
+      <%= f.label :password, "SECURITY_KEY // PASSWORD", class: 'block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest' %>
       <% if @minimum_password_length %>
-        <span class="text-sm text-gray-500">(<%= @minimum_password_length %> characters minimum)</span>
+        <span class="block font-mono text-[10px] text-ash mb-1">(<%= @minimum_password_length %> chars min)</span>
       <% end %>
       <%= f.password_field :password, autocomplete: "new-password",
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent' %>
+          class: 'w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel',
+          placeholder: 'create_password...' %>
     </div>
 
     <div>
-      <%= f.label :password_confirmation, class: 'block text-sm font-medium text-gray-700' %>
+      <%= f.label :password_confirmation, "VERIFY_KEY // CONFIRM", class: 'block font-mono text-xs text-acid-lime mb-2 uppercase tracking-widest' %>
       <%= f.password_field :password_confirmation, autocomplete: "new-password",
-          class: 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#003399] focus:border-transparent' %>
+          class: 'w-full bg-obsidian border border-steel text-white font-mono p-3 focus:border-acid-lime focus:outline-none focus:shadow-[0_0_10px_rgba(204,255,0,0.3)] transition-all placeholder-steel',
+          placeholder: 'confirm_password...' %>
     </div>
 
     <div class="pt-4">
-      <%= f.submit "Sign up", class: 'w-full bg-[#003399] text-white px-4 py-2 rounded-lg hover:bg-[#002266] cursor-pointer' %>
+      <%= f.submit "EXECUTE_REGISTRATION", class: 'w-full bg-acid-lime text-obsidian font-mono font-bold uppercase tracking-widest py-3 hover:bg-white hover:shadow-[4px_4px_0_0_#FFF] transition-all cursor-pointer border-none' %>
     </div>
   <% end %>
 
-  <div class="mt-6 text-center text-sm text-gray-500">
+  <div class="mt-8 pt-6 border-t border-steel text-center">
     <%= render "devise/shared/links" %>
   </div>
 </div>
