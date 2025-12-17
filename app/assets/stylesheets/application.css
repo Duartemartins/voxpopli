@@ -13,6 +13,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* iOS Safari fixed positioning fix */
+nav {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
 /* Scanline effect */
 .scanlines::before {
   content: " ";
