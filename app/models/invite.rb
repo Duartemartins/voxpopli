@@ -38,6 +38,9 @@ class Invite < ApplicationRecord
         update!(invitee: user, used_at: Time.current)
         # Set the invited_by relationship on the user
         user.update!(invited_by: inviter)
+
+        # Replenish invite codes
+        inviter.ensure_invite_codes!
       end
     end
   end

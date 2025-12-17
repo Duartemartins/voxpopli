@@ -28,6 +28,8 @@ Rails.application.routes.draw do
     resource :follow, only: [ :create, :destroy ]
   end
 
+  post "quest/dismiss", to: "users#dismiss_quest", as: :dismiss_quest
+
   namespace :settings do
     resource :account, only: [ :show, :destroy ]
     resources :api_keys, only: [ :index, :create, :destroy ]

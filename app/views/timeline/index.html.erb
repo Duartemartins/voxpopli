@@ -20,7 +20,8 @@
 
 <div class="space-y-8">
   <% if user_signed_in? %>
-    <% unless current_user.dofollow_eligible? %>
+    <% unless current_user.quest_dismissed? || current_user.dofollow_eligible? %>
+      <%= turbo_stream_from "quest_#{current_user.id}" %>
       <%= render 'shared/onboarding_quest' %>
     <% end %>
     <%= render 'posts/form' %>

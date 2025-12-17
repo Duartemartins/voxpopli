@@ -32,6 +32,11 @@
 <% end %>
 
 <div class="space-y-8">
+  <% if user_signed_in? && current_user == @user && !current_user.quest_dismissed? && !current_user.dofollow_eligible? %>
+    <%= turbo_stream_from "quest_#{current_user.id}" %>
+    <%= render 'shared/onboarding_quest' %>
+  <% end %>
+
   <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
     <div class="flex flex-col md:flex-row md:items-start gap-6">
       <%= user_avatar(@user, classes: "w-24 h-24 flex-shrink-0") %>

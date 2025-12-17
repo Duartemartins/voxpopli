@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user
-  before_action :authenticate_user!, only: [ :edit, :update ]
+  before_action :set_user, except: [ :dismiss_quest ]
+  before_action :authenticate_user!, only: [ :edit, :update, :dismiss_quest ]
   before_action :authorize_user!, only: [ :edit, :update ]
 
   def show
@@ -32,6 +32,15 @@ class UsersController < ApplicationController
       redirect_to user_path(@user.username), notice: "Profile updated successfully"
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def dismiss_quest
+    current_user.update(quest_dismissed: true)
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove("onboarding_quest") }
+      format.html { redirect_back fallback_location: root_path }
     end
   end
 

@@ -52,6 +52,34 @@
   </div>
 
   <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
+    <div class="flex justify-between items-start">
+      <div>
+        <h2 class="font-mono text-lg font-bold text-white mb-2">LINK_PROTOCOL</h2>
+        <p class="font-mono text-xs text-ash mb-4">Status of outbound links from your profile.</p>
+      </div>
+      <div class="ml-4">
+        <% if current_user.dofollow_eligible? %>
+          <span class="px-3 py-1 font-mono text-xs uppercase bg-acid-lime/10 text-acid-lime border border-acid-lime">
+            DOFOLLOW_ACTIVE
+          </span>
+        <% else %>
+          <span class="px-3 py-1 font-mono text-xs uppercase bg-steel/20 text-ash border border-steel">
+            NOFOLLOW_RESTRICTED
+          </span>
+        <% end %>
+      </div>
+    </div>
+    
+    <% unless current_user.dofollow_eligible? %>
+      <div class="mt-4 p-3 bg-obsidian border border-steel">
+        <p class="font-mono text-xs text-ash">
+          >> Complete the onboarding quest to unlock dofollow privileges.
+        </p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="bg-carbon border border-steel p-6 shadow-[4px_4px_0_0_#333]">
     <h2 class="font-mono text-lg font-bold text-white mb-2">API_ACCESS</h2>
     <p class="font-mono text-xs text-ash mb-4">Manage programmatic access credentials.</p>
     

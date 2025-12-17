@@ -6,8 +6,13 @@ class Follow < ApplicationRecord
   validate :cannot_follow_self
 
   after_create_commit :create_notification
+  after_create_commit :update_user_quest_progress
 
   private
+
+  def update_user_quest_progress
+    follower.check_quest_completion
+  end
 
   def cannot_follow_self
     errors.add(:base, "You cannot follow yourself") if follower_id == followed_id

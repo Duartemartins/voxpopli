@@ -11,6 +11,7 @@ class Vote < ApplicationRecord
   after_destroy :update_post_score
   after_create_commit :create_notification
   after_create_commit :trigger_webhooks
+  after_create_commit :update_user_quest_progress
 
   scope :upvotes, -> { where(value: 1) }
   scope :downvotes, -> { where(value: -1) }
@@ -24,6 +25,10 @@ class Vote < ApplicationRecord
   end
 
   private
+
+  def update_user_quest_progress
+    user.check_quest_completion
+  end
 
   def cannot_vote_own_post
     errors.add(:base, "You cannot vote on your own post") if post&.user_id == user_id

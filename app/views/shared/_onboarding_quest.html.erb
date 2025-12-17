@@ -1,4 +1,4 @@
-<div class="mb-8 border border-acid-lime bg-acid-lime/5 p-6 shadow-[4px_4px_0_0_#CCFF00]">
+<div id="onboarding_quest" class="mb-8 border border-acid-lime bg-acid-lime/5 p-6 shadow-[4px_4px_0_0_#CCFF00]">
   <div class="flex items-start justify-between mb-6">
     <div>
       <h2 class="font-mono text-lg font-bold text-white tracking-tighter flex items-center gap-2">
@@ -6,8 +6,22 @@
       </h2>
       <p class="font-mono text-xs text-ash mt-1">Complete all tasks to unlock dofollow backlinks for your profile and products.</p>
     </div>
-    <div class="font-mono text-xs text-acid-lime border border-acid-lime px-2 py-1 animate-pulse">
-      IN_PROGRESS
+    <div class="flex items-center gap-4">
+      <% if current_user.dofollow_eligible? %>
+        <div class="font-mono text-xs text-acid-lime border border-acid-lime px-2 py-1">
+          COMPLETE
+        </div>
+        <%= button_to dismiss_quest_path, method: :post, class: "font-mono text-xs text-ash hover:text-white uppercase tracking-widest" do %>
+          [ DISMISS ]
+        <% end %>
+      <% else %>
+        <div class="font-mono text-xs text-acid-lime border border-acid-lime px-2 py-1 animate-pulse">
+          IN_PROGRESS
+        </div>
+        <%= button_to dismiss_quest_path, method: :post, class: "font-mono text-xs text-ash hover:text-white uppercase tracking-widest" do %>
+          [ DISMISS ]
+        <% end %>
+      <% end %>
     </div>
   </div>
 

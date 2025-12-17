@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_15_221516) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_17_192206) do
   create_table "active_storage_attachments", id: :string, force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -181,6 +181,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_221516) do
     t.string "payment_method"
     t.datetime "paid_at"
     t.boolean "admin"
+    t.boolean "quest_dismissed", default: false, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["github_username"], name: "index_users_on_github_username", unique: true, where: "github_username IS NOT NULL"

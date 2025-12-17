@@ -214,6 +214,21 @@ class User < ApplicationRecord
     has_replied? && has_posted? && has_voted? && has_followed?
   end
 
+  after_commit :check_quest_completion, on: [ :update ]
+
+  def check_quest_completion
+    if dofollow_eligible? && !quest_dismissed?
+      update_column(:quest_dismissed, true)
+      broadcast_remove_to "quest_#{id}", target: "onboarding_quest"
+    else
+      # Always broadcast update to show progress
+      broadcast_replace_to "quest_#{id}",
+        target: "onboarding_quest",
+        partial: "shared/onboarding_quest",
+        locals: { current_user: self }
+    end
+  end
+
   # JSON-LD structured data for SEO
   def to_json_ld
     {

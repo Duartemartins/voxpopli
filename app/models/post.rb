@@ -18,10 +18,17 @@ class Post < ApplicationRecord
   scope :by_new, -> { order(created_at: :desc) }
   scope :by_voted, -> { order(score: :desc, created_at: :desc) }
   scope :original, -> { where(parent_id: nil, repost_of_id: nil) }
+
+  after_create_commit :update_user_quest_progress
+
+  def update_user_quest_progress
+    user.check_quest_completion
+  end
   scope :for_theme, ->(theme) { where(theme: theme) if theme.present? }
 
   after_create_commit :notify_mentions
   after_create_commit :trigger_webhooks
+  after_create_commit :update_user_quest_progress
 
   def reply?
     parent_id.present?
@@ -46,6 +53,10 @@ class Post < ApplicationRecord
   end
 
   private
+
+  def update_user_quest_progress
+    user.check_quest_completion
+  end
 
   def notify_mentions
     mentioned_usernames = body.scan(/@([a-z0-9_]+)/i).flatten.uniq
