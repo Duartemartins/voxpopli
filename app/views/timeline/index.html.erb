@@ -20,6 +20,9 @@
 
 <div class="space-y-8">
   <% if user_signed_in? %>
+    <% unless current_user.dofollow_eligible? %>
+      <%= render 'shared/onboarding_quest' %>
+    <% end %>
     <%= render 'posts/form' %>
   <% end %>
 

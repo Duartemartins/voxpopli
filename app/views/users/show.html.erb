@@ -80,7 +80,7 @@
         <!-- Links -->
         <div class="mt-4 flex flex-wrap gap-4">
           <% if @user.website.present? %>
-            <a href="<%= @user.website %>" target="_blank" rel="noopener" 
+            <a href="<%= @user.website %>" target="_blank" rel="noopener <%= 'nofollow' unless @user.dofollow_eligible? %>" 
                class="font-mono text-xs text-acid-cyan hover:text-white flex items-center gap-1">
               <span class="text-steel">>></span>
               <%= @user.website.gsub(/^https?:\/\//, '').chomp('/') %>

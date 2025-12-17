@@ -194,6 +194,26 @@ class User < ApplicationRecord
     looking_for.titleize.gsub("_", " ")
   end
 
+  def has_replied?
+    posts.where.not(parent_id: nil).exists?
+  end
+
+  def has_posted?
+    posts.where(parent_id: nil).exists?
+  end
+
+  def has_voted?
+    votes.exists?
+  end
+
+  def has_followed?
+    following.exists?
+  end
+
+  def dofollow_eligible?
+    has_replied? && has_posted? && has_voted? && has_followed?
+  end
+
   # JSON-LD structured data for SEO
   def to_json_ld
     {

@@ -1,0 +1,67 @@
+<div class="mb-8 border border-acid-lime bg-acid-lime/5 p-6 shadow-[4px_4px_0_0_#CCFF00]">
+  <div class="flex items-start justify-between mb-6">
+    <div>
+      <h2 class="font-mono text-lg font-bold text-white tracking-tighter flex items-center gap-2">
+        <span class="text-acid-lime">>></span> DOFOLLOW_QUEST_STATUS
+      </h2>
+      <p class="font-mono text-xs text-ash mt-1">Complete all tasks to unlock dofollow backlinks for your profile and products.</p>
+    </div>
+    <div class="font-mono text-xs text-acid-lime border border-acid-lime px-2 py-1 animate-pulse">
+      IN_PROGRESS
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Task 1: Reply -->
+    <div class="flex items-center justify-between p-3 border <%= current_user.has_replied? ? 'border-acid-lime bg-acid-lime/10' : 'border-steel bg-carbon' %>">
+      <div class="flex items-center gap-3">
+        <div class="w-4 h-4 border border-current flex items-center justify-center <%= current_user.has_replied? ? 'text-acid-lime' : 'text-ash' %>">
+          <% if current_user.has_replied? %>✓<% end %>
+        </div>
+        <span class="font-mono text-xs <%= current_user.has_replied? ? 'text-white' : 'text-ash' %>">TRANSMIT_REPLY</span>
+      </div>
+      <span class="font-mono text-[10px] <%= current_user.has_replied? ? 'text-acid-lime' : 'text-ash' %>">
+        <%= current_user.has_replied? ? '[ COMPLETE ]' : '[ PENDING ]' %>
+      </span>
+    </div>
+
+    <!-- Task 2: Post -->
+    <div class="flex items-center justify-between p-3 border <%= current_user.has_posted? ? 'border-acid-lime bg-acid-lime/10' : 'border-steel bg-carbon' %>">
+      <div class="flex items-center gap-3">
+        <div class="w-4 h-4 border border-current flex items-center justify-center <%= current_user.has_posted? ? 'text-acid-lime' : 'text-ash' %>">
+          <% if current_user.has_posted? %>✓<% end %>
+        </div>
+        <span class="font-mono text-xs <%= current_user.has_posted? ? 'text-white' : 'text-ash' %>">INITIATE_TRANSMISSION</span>
+      </div>
+      <span class="font-mono text-[10px] <%= current_user.has_posted? ? 'text-acid-lime' : 'text-ash' %>">
+        <%= current_user.has_posted? ? '[ COMPLETE ]' : '[ PENDING ]' %>
+      </span>
+    </div>
+
+    <!-- Task 3: Vote -->
+    <div class="flex items-center justify-between p-3 border <%= current_user.has_voted? ? 'border-acid-lime bg-acid-lime/10' : 'border-steel bg-carbon' %>">
+      <div class="flex items-center gap-3">
+        <div class="w-4 h-4 border border-current flex items-center justify-center <%= current_user.has_voted? ? 'text-acid-lime' : 'text-ash' %>">
+          <% if current_user.has_voted? %>✓<% end %>
+        </div>
+        <span class="font-mono text-xs <%= current_user.has_voted? ? 'text-white' : 'text-ash' %>">CAST_VOTE</span>
+      </div>
+      <span class="font-mono text-[10px] <%= current_user.has_voted? ? 'text-acid-lime' : 'text-ash' %>">
+        <%= current_user.has_voted? ? '[ COMPLETE ]' : '[ PENDING ]' %>
+      </span>
+    </div>
+
+    <!-- Task 4: Follow -->
+    <div class="flex items-center justify-between p-3 border <%= current_user.has_followed? ? 'border-acid-lime bg-acid-lime/10' : 'border-steel bg-carbon' %>">
+      <div class="flex items-center gap-3">
+        <div class="w-4 h-4 border border-current flex items-center justify-center <%= current_user.has_followed? ? 'text-acid-lime' : 'text-ash' %>">
+          <% if current_user.has_followed? %>✓<% end %>
+        </div>
+        <span class="font-mono text-xs <%= current_user.has_followed? ? 'text-white' : 'text-ash' %>">ESTABLISH_LINK</span>
+      </div>
+      <span class="font-mono text-[10px] <%= current_user.has_followed? ? 'text-acid-lime' : 'text-ash' %>">
+        <%= current_user.has_followed? ? '[ COMPLETE ]' : '[ PENDING ]' %>
+      </span>
+    </div>
+  </div>
+</div>

@@ -57,7 +57,7 @@
         <span class="font-mono text-[10px] text-ash uppercase">PRODUCTS:</span>
         <% builder.launched_products_list.each do |product| %>
           <% if product["url"].present? %>
-            <a href="<%= product["url"] %>" target="_blank" rel="noopener" class="font-mono text-xs text-acid-cyan hover:text-white" onclick="event.stopPropagation();">
+            <a href="<%= product["url"] %>" target="_blank" rel="noopener <%= 'nofollow' unless builder.dofollow_eligible? %>" class="font-mono text-xs text-acid-cyan hover:text-white" onclick="event.stopPropagation();">
               <%= product["name"] %><% if product["mrr"].present? && product["mrr"].to_i > 0 %> <span class="text-acid-lime">($<%= number_with_delimiter(product["mrr"]) %>/mo)</span><% end %>
             </a>
           <% else %>
