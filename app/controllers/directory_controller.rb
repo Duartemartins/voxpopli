@@ -53,7 +53,7 @@ class DirectoryController < ApplicationController
   end
 
   def sitemap
-    @builders = User.where.not(confirmed_at: nil).select(:username, :updated_at)
+    @builders = User.select(:username, :updated_at)
 
     respond_to do |format|
       format.xml
@@ -63,7 +63,7 @@ class DirectoryController < ApplicationController
   private
 
   def base_scope
-    User.where.not(confirmed_at: nil)
+    User.all
   end
 
   def collect_all_skills
@@ -78,8 +78,7 @@ class DirectoryController < ApplicationController
   end
 
   def collect_all_products
-    users_with_products = User.where.not(confirmed_at: nil)
-                              .where.not(launched_products: [ nil, "", "[]" ])
+    users_with_products = User.where.not(launched_products: [ nil, "", "[]" ])
 
     products = []
     users_with_products.find_each do |user|
